@@ -2,7 +2,6 @@ import { useEffect, useRef } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import type { FirstPersonControlsProps } from './types'
 import {
-  BOUNDS,
   DIRECTORY_BOARD_POS,
   DIRECTORY_PROXIMITY_RADIUS,
   DRAG_SENSITIVITY,
@@ -10,9 +9,11 @@ import {
   EYE_HEIGHT,
   LOOK_SENSITIVITY,
   PITCH_LIMIT,
+  PLAYER_RADIUS,
   RUN_SPEED,
   START_POSITION,
   WALK_SPEED,
+  resolveMovement,
 } from './layout'
 
 const FORWARD_KEYS = new Set(['KeyW', 'ArrowUp'])
@@ -227,8 +228,15 @@ export function FirstPersonControls({
       const dx = (strafe * cosY - forward * sinY) * currentSpeed * dt
       const dz = (-forward * cosY - strafe * sinY) * currentSpeed * dt
 
-      pos.current[0] = Math.max(BOUNDS.minX, Math.min(BOUNDS.maxX, pos.current[0] + dx))
-      pos.current[2] = Math.max(BOUNDS.minZ, Math.min(BOUNDS.maxZ, pos.current[2] + dz))
+      const [newX, newZ] = resolveMovement(
+        pos.current[0],
+        pos.current[2],
+        dx,
+        dz,
+        PLAYER_RADIUS,
+      )
+      pos.current[0] = newX
+      pos.current[2] = newZ
     }
 
     camera.position.set(pos.current[0], EYE_HEIGHT, pos.current[2])
