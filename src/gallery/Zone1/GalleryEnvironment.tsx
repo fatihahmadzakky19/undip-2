@@ -204,12 +204,12 @@ export const GalleryEnvironment = memo(function GalleryEnvironment({
       {/* 10. Central Red Carpet */}
       <RedCarpet />
 
-      {/* 12. EXTRA ASSETS: Visitor Lounge */}
-      <CulledEntity position={[4.8, 0.8, 3.8]} radius={3.2} maxDistance={28} name="lounge-right">
-        <VisitorLounge position={[4.8, 0, 3.8]} rotationY={-Math.PI / 6} />
+      {/* 12. EXTRA ASSETS: Visitor Lounge (Adjusted slightly inward to provide spacious walkable aisle near wall bookshelves) */}
+      <CulledEntity position={[4.2, 0.8, 3.8]} radius={3.2} maxDistance={28} name="lounge-right">
+        <VisitorLounge position={[4.2, 0, 3.8]} rotationY={-Math.PI / 6} />
       </CulledEntity>
-      <CulledEntity position={[-4.8, 0.8, 3.8]} radius={3.2} maxDistance={28} name="lounge-left">
-        <VisitorLounge position={[-4.8, 0, 3.8]} rotationY={Math.PI / 6} />
+      <CulledEntity position={[-4.2, 0.8, 3.8]} radius={3.2} maxDistance={28} name="lounge-left">
+        <VisitorLounge position={[-4.2, 0, 3.8]} rotationY={Math.PI / 6} />
       </CulledEntity>
 
       {/* 13. EXTRA ASSET: Standing Wayfinding Directory Board */}

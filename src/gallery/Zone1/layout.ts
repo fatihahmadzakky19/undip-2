@@ -26,13 +26,13 @@ export const RUN_SPEED = 7.2 // 2x speed sprint with Shift key
 
 /** Navigation Clamping Limits */
 export const BOUNDS = {
-  minX: -(HALL.halfWidth - 1.2),
-  maxX: HALL.halfWidth - 1.2,
+  minX: -(HALL.halfWidth - 0.55), // -7.05m (allows walking freely into side aisles and browsing books)
+  maxX: HALL.halfWidth - 0.55,    // 7.05m
   minZ: HALL.zBack + 1.8,
   maxZ: HALL.zFront - 0.28, // Flush/mepet right at the entrance doors (Z = 11.72)
 } as const
 
-export const PLAYER_RADIUS = 0.45
+export const PLAYER_RADIUS = 0.35
 
 export interface BoxCollider {
   name: string
@@ -99,23 +99,23 @@ export const COLLIDERS: readonly BoxCollider[] = [
   },
 
   // 6. Visitor Lounge Kiri (Sofa Velvet & Meja Kaca)
-  // Located at X = -4.8, Z = 3.8, rotated 30 deg
+  // Positioned at X = -4.2, Z = 3.8 (allowing generous walkway next to wall bookshelves)
   {
     name: 'visitor-lounge-left',
-    minX: -6.3,
-    maxX: -3.3,
-    minZ: 2.8,
-    maxZ: 4.8,
+    minX: -5.45,
+    maxX: -2.95,
+    minZ: 2.7,
+    maxZ: 4.9,
   },
 
   // 7. Visitor Lounge Kanan (Sofa Velvet & Meja Kaca)
-  // Located at X = 4.8, Z = 3.8, rotated -30 deg
+  // Positioned at X = 4.2, Z = 3.8 (allowing generous walkway next to wall bookshelves)
   {
     name: 'visitor-lounge-right',
-    minX: 3.3,
-    maxX: 6.3,
-    minZ: 2.8,
-    maxZ: 4.8,
+    minX: 2.95,
+    maxX: 5.45,
+    minZ: 2.7,
+    maxZ: 4.9,
   },
 
   // 8. Lemari Buku Vertikal (Tall Bookcases) di 4 Sudut Ruangan
