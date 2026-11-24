@@ -20,31 +20,21 @@ export const HALL_LENGTH = HALL.zFront - HALL.zBack // 38.0m
 export const HALL_CENTER_Z = (HALL.zFront + HALL.zBack) / 2 // -7.0m
 
 export const EYE_HEIGHT = 1.65
-export const START_POSITION: [number, number, number] = [0, EYE_HEIGHT, 11.2]
+export const START_POSITION: [number, number, number] = [0, EYE_HEIGHT, 11.4]
 export const WALK_SPEED = 3.6
 export const RUN_SPEED = 7.2 // 2x speed sprint with Shift key
 
-/** Camera & Visitor Collision Physical Radius */
-export const PLAYER_RADIUS = 0.40
-
-/** Room Wall Boundaries (clamped with player radius to prevent near-plane mesh clipping) */
-export const ROOM_BOUNDS = {
-  minX: -(HALL.halfWidth - PLAYER_RADIUS),
-  maxX: HALL.halfWidth - PLAYER_RADIUS,
-  minZ: HALL.zBack + PLAYER_RADIUS + 0.15,
-  maxZ: HALL.zFront - PLAYER_RADIUS - 0.35,
-} as const
-
-/** Legacy Navigation Limits (kept for backward compatibility) */
+/** Navigation Clamping Limits */
 export const BOUNDS = {
   minX: -(HALL.halfWidth - 1.2),
   maxX: HALL.halfWidth - 1.2,
   minZ: HALL.zBack + 1.8,
-  maxZ: HALL.zFront - 0.28,
+  maxZ: HALL.zFront - 0.28, // Flush/mepet right at the entrance doors (Z = 11.72)
 } as const
 
-/** Solid Object Colliders in the Hall (AABB boxes in world coordinates) */
-export interface ColliderAABB {
+export const PLAYER_RADIUS = 0.45
+
+export interface BoxCollider {
   name: string
   minX: number
   maxX: number
@@ -52,231 +42,220 @@ export interface ColliderAABB {
   maxZ: number
 }
 
-export const OBSTACLE_COLLIDERS: ColliderAABB[] = [
-  // 1. Panggung Utama & Podium Kehormatan (Stage Dais & Ceremonial Podium)
+/**
+ * Master List of Solid Physical Object Colliders in the Grand Museum Hall:
+ * Prevents camera/visitor from walking through stages, podiums, monuments,
+ * directory boards, lounge furniture, tall bookcases, and wall shelves.
+ */
+export const COLLIDERS: readonly BoxCollider[] = [
+  // 1. Panggung Utama & Podium Kehormatan (Ceremonial Stage Dais & Podium)
+  // Stage Tier 1 (5.6m x 3.6m) + Tier 2 (4.8m x 2.8m) + Teak Podium
   {
-    name: 'stage-dais-and-podium',
+    name: 'ceremonial-stage-and-podium',
     minX: -2.85,
     maxX: 2.85,
-    minZ: -26.0,
+    minZ: -20.2,
     maxZ: -16.35,
   },
-  // 2. Monumen Prasasti Undip (Sayap Kiri Panggung)
+
+  // 2. Prasasti Pendirian Undip (Sayap Kiri Panggung Utama)
+  // Carved Teak Base (1.75m x 1.35m) & Polished Black Granite Inscription Slab
   {
-    name: 'prasasti-monument',
+    name: 'monument-prasasti',
     minX: -4.95,
     maxX: -3.05,
-    minZ: -26.0,
+    minZ: -20.8,
     maxZ: -19.25,
   },
-  // 3. Tiang Bendera Upacara (Sayap Kanan Panggung)
+
+  // 3. Tiang Bendera Upacara (Sayap Kanan Panggung Utama)
+  // Teakwood Flag Stand (1.9m x 0.7m) & Brass Flagpoles
   {
-    name: 'ceremonial-flags',
-    minX: 2.95,
-    maxX: 5.05,
+    name: 'flag-stand',
+    minX: 3.0,
+    maxX: 5.0,
+    minZ: -20.5,
+    maxZ: -19.5,
+  },
+
+  // 4. Struktur Latar Belakang Panggung Utama (Navy Backdrop & Wainscoting)
+  // Blocks walking behind the elevated backdrop monolith
+  {
+    name: 'stage-rear-structure',
+    minX: -4.6,
+    maxX: 4.6,
     minZ: -26.0,
-    maxZ: -19.55,
+    maxZ: -20.0,
   },
-  // 4. Rak Buku Dinding Rendah - Sayap Kiri (Left Wall Bookshelves)
+
+  // 5. Standing Directory Board (Papan Panduan Navigasi & Peta Museum)
+  // Located at X = 3.8, Z = 8.5 with width ~1.4m, depth ~0.7m, rotated -45 deg
   {
-    name: 'wall-bookshelf-left-1',
-    minX: -7.6,
-    maxX: -7.1,
-    minZ: 0.35,
-    maxZ: 8.65,
+    name: 'directory-board',
+    minX: 3.05,
+    maxX: 4.55,
+    minZ: 7.75,
+    maxZ: 9.25,
   },
+
+  // 6. Visitor Lounge Kiri (Sofa Velvet & Meja Kaca)
+  // Located at X = -4.8, Z = 3.8, rotated 30 deg
   {
-    name: 'wall-bookshelf-left-2',
-    minX: -7.6,
-    maxX: -7.1,
-    minZ: -12.35,
-    maxZ: -2.65,
+    name: 'visitor-lounge-left',
+    minX: -6.3,
+    maxX: -3.3,
+    minZ: 2.8,
+    maxZ: 4.8,
   },
+
+  // 7. Visitor Lounge Kanan (Sofa Velvet & Meja Kaca)
+  // Located at X = 4.8, Z = 3.8, rotated -30 deg
   {
-    name: 'wall-bookshelf-left-3',
-    minX: -7.6,
-    maxX: -7.1,
-    minZ: -23.35,
-    maxZ: -13.65,
+    name: 'visitor-lounge-right',
+    minX: 3.3,
+    maxX: 6.3,
+    minZ: 2.8,
+    maxZ: 4.8,
   },
-  // 5. Rak Buku Dinding Rendah - Sayap Kanan (Right Wall Bookshelves)
-  {
-    name: 'wall-bookshelf-right-1',
-    minX: 7.1,
-    maxX: 7.6,
-    minZ: -3.85,
-    maxZ: 6.05,
-  },
-  {
-    name: 'wall-bookshelf-right-2',
-    minX: 7.1,
-    maxX: 7.6,
-    minZ: -14.45,
-    maxZ: -4.55,
-  },
-  {
-    name: 'wall-bookshelf-right-3',
-    minX: 7.1,
-    maxX: 7.6,
-    minZ: -22.35,
-    maxZ: -14.65,
-  },
-  // 6. Lemari Buku Vertikal Tinggi (Tall Heritage Bookcases)
-  {
-    name: 'tall-bookcase-front-right',
-    minX: 6.95,
-    maxX: 7.6,
-    minZ: 9.55,
-    maxZ: 11.65,
-  },
+
+  // 8. Lemari Buku Vertikal (Tall Bookcases) di 4 Sudut Ruangan
+  // Depan Kiri (dekat pintu masuk)
   {
     name: 'tall-bookcase-front-left',
     minX: -7.6,
-    maxX: -6.95,
-    minZ: 9.55,
-    maxZ: 11.65,
+    maxX: -6.7,
+    minZ: 9.6,
+    maxZ: 11.6,
   },
+  // Depan Kanan (dekat pintu masuk)
   {
-    name: 'tall-bookcase-back-right',
-    minX: 6.95,
+    name: 'tall-bookcase-front-right',
+    minX: 6.7,
     maxX: 7.6,
-    minZ: -24.65,
-    maxZ: -22.55,
+    minZ: 9.6,
+    maxZ: 11.6,
   },
+  // Belakang Kiri (mengapit panggung)
   {
     name: 'tall-bookcase-back-left',
     minX: -7.6,
-    maxX: -6.95,
-    minZ: -24.65,
-    maxZ: -22.55,
+    maxX: -6.7,
+    minZ: -24.6,
+    maxZ: -22.6,
   },
-  // 7. Papan Petunjuk Direktori Standing
+  // Belakang Kanan (mengapit panggung)
   {
-    name: 'directory-board',
-    minX: 3.15,
-    maxX: 4.45,
-    minZ: 7.85,
-    maxZ: 9.15,
+    name: 'tall-bookcase-back-right',
+    minX: 6.7,
+    maxX: 7.6,
+    minZ: -24.6,
+    maxZ: -22.6,
   },
-  // 8. Visitor Lounge (Sofa & Meja Kaca Kiri dan Kanan)
+
+  // 9. Rak Buku Dinding Sayap Kiri (Wall Bookshelves under Founders Wing)
   {
-    name: 'lounge-left',
-    minX: -5.9,
-    maxX: -3.7,
-    minZ: 2.7,
-    maxZ: 4.9,
+    name: 'wall-bookshelf-founders',
+    minX: -7.6,
+    maxX: -7.05,
+    minZ: 0.3,
+    maxZ: 8.7,
   },
   {
-    name: 'lounge-right',
-    minX: 3.7,
-    maxX: 5.9,
-    minZ: 2.7,
-    maxZ: 4.9,
+    name: 'wall-bookshelf-pleburan',
+    minX: -7.6,
+    maxX: -7.05,
+    minZ: -12.4,
+    maxZ: -2.6,
   },
-  // 9. Maket Miniatur Kampus (Miniature Map)
   {
-    name: 'miniature-map',
-    minX: -1.35,
-    maxX: 1.35,
-    minZ: -5.15,
-    maxZ: -1.85,
+    name: 'wall-bookshelf-tembalang',
+    minX: -7.6,
+    maxX: -7.05,
+    minZ: -23.4,
+    maxZ: -13.6,
+  },
+
+  // 10. Rak Buku Dinding Sayap Kanan (Wall Bookshelves under History Wing)
+  {
+    name: 'wall-bookshelf-penegerian',
+    minX: 7.05,
+    maxX: 7.6,
+    minZ: -3.9,
+    maxZ: 6.1,
+  },
+  {
+    name: 'wall-bookshelf-rsnd',
+    minX: 7.05,
+    maxX: 7.6,
+    minZ: -14.5,
+    maxZ: -4.5,
+  },
+  {
+    name: 'wall-bookshelf-future',
+    minX: 7.05,
+    maxX: 7.6,
+    minZ: -22.4,
+    maxZ: -14.6,
   },
 ]
 
-/** Test if circle at (x, z) with given radius intersects an AABB box */
-export function isCollidingWithBox(
-  x: number,
-  z: number,
-  radius: number,
-  box: ColliderAABB,
-): boolean {
-  const closestX = Math.max(box.minX, Math.min(box.maxX, x))
-  const closestZ = Math.max(box.minZ, Math.min(box.maxZ, z))
-  const dx = x - closestX
-  const dz = z - closestZ
-  return dx * dx + dz * dz < radius * radius
-}
-
-/** Check if position (x, z) collides with boundaries or any solid obstacle */
-export function checkCollision(
-  x: number,
-  z: number,
-  radius: number = PLAYER_RADIUS,
-  colliders: ColliderAABB[] = OBSTACLE_COLLIDERS,
-  bounds: typeof ROOM_BOUNDS = ROOM_BOUNDS,
-): boolean {
-  if (x < bounds.minX || x > bounds.maxX || z < bounds.minZ || z > bounds.maxZ) {
-    return true
-  }
-  for (let i = 0; i < colliders.length; i++) {
-    if (isCollidingWithBox(x, z, radius, colliders[i])) {
-      return true
-    }
-  }
-  return false
-}
-
 /**
- * Slide-based collision resolution for smooth, realistic camera navigation.
- * Uses substepping to eliminate tunneling and allow natural sliding along walls and obstacles.
+ * Resolves 2D circular player collisions against all museum object colliders and room bounds.
+ * Uses exact closest-point circle-vs-AABB intersection tests with iterative relaxation
+ * to ensure silky smooth sliding against faces, edges, and corners without penetration.
  */
-export function resolveMovement(
-  currentX: number,
-  currentZ: number,
-  dx: number,
-  dz: number,
+export function resolveCollisions(
+  x: number,
+  z: number,
   radius: number = PLAYER_RADIUS,
-  colliders: ColliderAABB[] = OBSTACLE_COLLIDERS,
-  bounds: typeof ROOM_BOUNDS = ROOM_BOUNDS,
 ): [number, number] {
-  if (dx === 0 && dz === 0) return [currentX, currentZ]
+  let px = x
+  let pz = z
 
-  const distance = Math.hypot(dx, dz)
-  const maxStep = radius * 0.4
-  const steps = Math.max(1, Math.ceil(distance / maxStep))
+  for (let iter = 0; iter < 3; iter++) {
+    let hadCollision = false
 
-  let posX = currentX
-  let posZ = currentZ
-  const stepDx = dx / steps
-  const stepDz = dz / steps
+    for (const c of COLLIDERS) {
+      // Find closest point on AABB to circle center (px, pz)
+      const closestX = Math.max(c.minX, Math.min(c.maxX, px))
+      const closestZ = Math.max(c.minZ, Math.min(c.maxZ, pz))
 
-  for (let s = 0; s < steps; s++) {
-    const targetX = posX + stepDx
-    const targetZ = posZ + stepDz
+      const diffX = px - closestX
+      const diffZ = pz - closestZ
+      const distSq = diffX * diffX + diffZ * diffZ
 
-    // Try full diagonal step first
-    if (!checkCollision(targetX, targetZ, radius, colliders, bounds)) {
-      posX = targetX
-      posZ = targetZ
-      continue
-    }
+      if (distSq < radius * radius) {
+        hadCollision = true
 
-    // Slide along X if Z is blocked
-    const canMoveX = !checkCollision(targetX, posZ, radius, colliders, bounds)
-    // Slide along Z if X is blocked
-    const canMoveZ = !checkCollision(posX, targetZ, radius, colliders, bounds)
+        if (distSq > 0.000001) {
+          const dist = Math.sqrt(distSq)
+          const push = radius - dist
+          px += (diffX / dist) * push
+          pz += (diffZ / dist) * push
+        } else {
+          // Circle center is completely inside the AABB - push to nearest face
+          const dLeft = px - c.minX
+          const dRight = c.maxX - px
+          const dBack = pz - c.minZ
+          const dFront = c.maxZ - pz
+          const minOverlap = Math.min(dLeft, dRight, dBack, dFront)
 
-    if (canMoveX && !canMoveZ) {
-      posX = targetX
-    } else if (canMoveZ && !canMoveX) {
-      posZ = targetZ
-    } else if (canMoveX && canMoveZ) {
-      // Both single-axis steps are clear individually: prefer the axis with the larger movement delta
-      if (Math.abs(stepDx) >= Math.abs(stepDz)) {
-        posX = targetX
-        if (!checkCollision(posX, targetZ, radius, colliders, bounds)) {
-          posZ = targetZ
-        }
-      } else {
-        posZ = targetZ
-        if (!checkCollision(targetX, posZ, radius, colliders, bounds)) {
-          posX = targetX
+          if (minOverlap === dLeft) px = c.minX - radius
+          else if (minOverlap === dRight) px = c.maxX + radius
+          else if (minOverlap === dBack) pz = c.minZ - radius
+          else pz = c.maxZ + radius
         }
       }
     }
+
+    // Re-clamp to room bounds
+    px = Math.max(BOUNDS.minX, Math.min(BOUNDS.maxX, px))
+    pz = Math.max(BOUNDS.minZ, Math.min(BOUNDS.maxZ, pz))
+
+    if (!hadCollision) break
   }
 
-  return [posX, posZ]
+  return [px, pz]
 }
 
 /** Red Carpet - Runs flush from the entrance door sill (z = 11.88) to the stage front (z = -16.4) */
@@ -307,7 +286,7 @@ export const DIRECTORY_BOARD_POS: [number, number, number] = [3.8, 0, 8.5]
 export const DIRECTORY_PROXIMITY_RADIUS = 3.2
 /** Section Teleport Targets for quick navigation */
 export const SECTION_TARGETS = {
-  entrance: [0, EYE_HEIGHT, 11.2] as [number, number, number],
+  entrance: [0, EYE_HEIGHT, 11.4] as [number, number, number],
   founders: [-4.5, EYE_HEIGHT, 0.0] as [number, number, number],
   map: [0, EYE_HEIGHT, 0.5] as [number, number, number],
   podium: [0, EYE_HEIGHT, -14.5] as [number, number, number],

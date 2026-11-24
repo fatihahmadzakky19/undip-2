@@ -10,10 +10,10 @@ import {
   LOOK_SENSITIVITY,
   PITCH_LIMIT,
   PLAYER_RADIUS,
+  resolveCollisions,
   RUN_SPEED,
   START_POSITION,
   WALK_SPEED,
-  resolveMovement,
 } from './layout'
 
 const FORWARD_KEYS = new Set(['KeyW', 'ArrowUp'])
@@ -183,10 +183,11 @@ export function FirstPersonControls({
   // Teleport / Smooth glide to target position
   useEffect(() => {
     if (!targetPosition) return
-    pos.current = [targetPosition[0], targetPosition[1], targetPosition[2]]
+    const [safeX, safeZ] = resolveCollisions(targetPosition[0], targetPosition[2], PLAYER_RADIUS)
+    pos.current = [safeX, targetPosition[1], safeZ]
     // If target is left wing, yaw towards left; if right, yaw towards right
-    if (targetPosition[0] < -2) yaw.current = -Math.PI / 2
-    else if (targetPosition[0] > 2) yaw.current = Math.PI / 2
+    if (safeX < -2) yaw.current = -Math.PI / 2
+    else if (safeX > 2) yaw.current = Math.PI / 2
     else yaw.current = 0
     pitch.current = 0
   }, [targetPosition])
@@ -228,15 +229,20 @@ export function FirstPersonControls({
       const dx = (strafe * cosY - forward * sinY) * currentSpeed * dt
       const dz = (-forward * cosY - strafe * sinY) * currentSpeed * dt
 
-      const [newX, newZ] = resolveMovement(
-        pos.current[0],
-        pos.current[2],
-        dx,
-        dz,
-        PLAYER_RADIUS,
-      )
-      pos.current[0] = newX
-      pos.current[2] = newZ
+      // Sliding collision resolution:
+      // Separate X and Z evaluation allows the player to glide smoothly along walls and obstacles
+      const targetX = pos.current[0] + dx
+      const targetZ = pos.current[2] + dz
+
+      // Step 1: Slide resolution along X
+      const [slideX] = resolveCollisions(targetX, pos.current[2], PLAYER_RADIUS)
+      // Step 2: Slide resolution along Z from current position
+      const [, slideZ] = resolveCollisions(pos.current[0], targetZ, PLAYER_RADIUS)
+      // Step 3: Combined resolution to prevent diagonal corner piercing
+      const [finalX, finalZ] = resolveCollisions(slideX, slideZ, PLAYER_RADIUS)
+
+      pos.current[0] = finalX
+      pos.current[2] = finalZ
     }
 
     camera.position.set(pos.current[0], EYE_HEIGHT, pos.current[2])
