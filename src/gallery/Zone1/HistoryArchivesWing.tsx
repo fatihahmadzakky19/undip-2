@@ -19,48 +19,183 @@ interface SalonFrameConfig {
 /**
  * Spacious Museum Gallery Wall Layout for History & Archives Wing:
  * Situated along the right wall directly flanking and spanning the 3D Miniature Map.
- * Standardized with generous gaps of at least 55cm–100cm (>50cm) between frames horizontally
- * and 60cm (>50cm) between upper and lower rows for an airy, elegant aesthetic.
+ * Standardized with generous gaps between frames horizontally and vertically,
+ * elevated higher to leave ample space above the wall bookshelf nameplates.
  */
 const SALON_LAYOUT: SalonFrameConfig[] = [
   // --- COLUMN 1 (Z = 5.6): Era Prakarsa & Statuta 1956-1957 ---
-  { exhibitId: 'archives-notary-1956', z: 5.6, y: 3.9, width: 1.15, height: 1.35, frameColor: '#d4af37' },
-  { exhibitId: 'archives-statuta-1957', z: 5.6, y: 2.05, width: 1.15, height: 1.35, frameColor: '#3d2516' },
+  { exhibitId: 'archives-notary-1956', z: 5.6, y: 4.65, width: 1.15, height: 1.35, frameColor: '#d4af37' },
+  { exhibitId: 'archives-statuta-1957', z: 5.6, y: 2.80, width: 1.15, height: 1.35, frameColor: '#3d2516' },
 
   // --- COLUMN 2 (Z = 3.3): Foto Patung Pleburan & Upacara Lapangan OR 1957 ---
-  { exhibitId: 'early-photo-panti-budaya', z: 3.3, y: 3.9, width: 1.3, height: 0.95, frameColor: '#3d2516' },
-  { exhibitId: 'early-photo-students-1957', z: 3.3, y: 2.05, width: 1.3, height: 0.95, frameColor: '#2b1a10' },
+  { exhibitId: 'early-photo-panti-budaya', z: 3.3, y: 4.65, width: 1.3, height: 0.95, frameColor: '#3d2516' },
+  { exhibitId: 'early-photo-students-1957', z: 3.3, y: 2.80, width: 1.3, height: 0.95, frameColor: '#2b1a10' },
 
   // --- COLUMN 3: MONUMENTAL CENTERPIECE 1 (Z = 1.1): Mahakarya Raden Saleh ---
-  { exhibitId: 'artwork-diponegoro-center', z: 1.1, y: 2.95, width: 2.1, height: 1.45, frameColor: '#d4af37' },
+  { exhibitId: 'artwork-diponegoro-center', z: 1.1, y: 3.70, width: 2.1, height: 1.45, frameColor: '#d4af37' },
 
   // --- COLUMN 4 (Z = -1.5): Payung Hukum PP No. 7/1961 & Lembaran Negara ---
-  { exhibitId: 'decree-sk-1961', z: -1.5, y: 3.9, width: 1.15, height: 1.35, frameColor: '#d4af37' },
-  { exhibitId: 'decree-lembaran-negara', z: -1.5, y: 2.05, width: 1.15, height: 1.35, frameColor: '#3d2516' },
+  { exhibitId: 'decree-sk-1961', z: -1.5, y: 4.65, width: 1.15, height: 1.35, frameColor: '#d4af37' },
+  { exhibitId: 'decree-lembaran-negara', z: -1.5, y: 2.80, width: 1.15, height: 1.35, frameColor: '#3d2516' },
 
   // --- COLUMN 5 (Z = -3.5): DIRECTLY FACING CENTRAL MULADI DOME & CAMPUS MAKET ---
-  { exhibitId: 'history-muladi-dome', z: -3.5, y: 3.9, width: 1.35, height: 1.0, frameColor: '#d4af37' },
-  { exhibitId: 'history-widya-puraya', z: -3.5, y: 2.05, width: 1.35, height: 1.0, frameColor: '#3d2516' },
+  { exhibitId: 'history-muladi-dome', z: -3.5, y: 4.65, width: 1.35, height: 1.0, frameColor: '#d4af37' },
+  { exhibitId: 'history-widya-puraya', z: -3.5, y: 2.80, width: 1.35, height: 1.0, frameColor: '#3d2516' },
 
   // --- COLUMN 6: MONUMENTAL CENTERPIECE 2 (Z = -5.7): Potret Presiden Sukarno 1960 ---
-  { exhibitId: 'archives-soekarno-1960', z: -5.7, y: 2.95, width: 1.35, height: 1.85, frameColor: '#d4af37' },
+  { exhibitId: 'archives-soekarno-1960', z: -5.7, y: 3.70, width: 1.35, height: 1.85, frameColor: '#d4af37' },
 
   // --- COLUMN 7 (Z = -7.9): Auditorium Pleburan & Gedung Pusat Riset ---
-  { exhibitId: 'early-photo-soekarno-visit', z: -7.9, y: 3.9, width: 1.3, height: 0.95, frameColor: '#3d2516' },
-  { exhibitId: 'early-campus-pleburan', z: -7.9, y: 2.05, width: 1.3, height: 1.0, frameColor: '#2b1a10' },
+  { exhibitId: 'early-photo-soekarno-visit', z: -7.9, y: 4.65, width: 1.3, height: 0.95, frameColor: '#3d2516' },
+  { exhibitId: 'early-campus-pleburan', z: -7.9, y: 2.80, width: 1.3, height: 1.0, frameColor: '#2b1a10' },
 
   // --- COLUMN 8 (Z = -10.1): Monumen Patung Kuda & Kampus Manajemen Tembalang ---
-  { exhibitId: 'history-masterplan-tembalang', z: -10.1, y: 3.9, width: 1.15, height: 1.45, frameColor: '#3d2516' },
-  { exhibitId: 'history-groundbreaking-tembalang', z: -10.1, y: 2.05, width: 1.3, height: 0.95, frameColor: '#d4af37' },
+  { exhibitId: 'history-masterplan-tembalang', z: -10.1, y: 4.65, width: 1.15, height: 1.45, frameColor: '#3d2516' },
+  { exhibitId: 'history-groundbreaking-tembalang', z: -10.1, y: 2.80, width: 1.3, height: 0.95, frameColor: '#d4af37' },
 
   // --- COLUMN 9 (Z = -12.3): RSND Tembalang & Waduk Edukasi Undip ---
-  { exhibitId: 'history-rsnd', z: -12.3, y: 3.9, width: 1.3, height: 0.95, frameColor: '#3d2516' },
-  { exhibitId: 'history-waduk-undip', z: -12.3, y: 2.05, width: 1.3, height: 0.95, frameColor: '#2b1a10' },
+  { exhibitId: 'history-rsnd', z: -12.3, y: 4.65, width: 1.3, height: 0.95, frameColor: '#3d2516' },
+  { exhibitId: 'history-waduk-undip', z: -12.3, y: 2.80, width: 1.3, height: 0.95, frameColor: '#2b1a10' },
 
   // --- COLUMN 10 (Z = -14.5): Pangeran Diponegoro & Transformasi PTN-BH ---
-  { exhibitId: 'history-wisuda-perdana', z: -14.5, y: 3.9, width: 1.15, height: 1.45, frameColor: '#3d2516' },
-  { exhibitId: 'history-transformation', z: -14.5, y: 2.05, width: 1.3, height: 1.05, frameColor: '#d4af37' },
+  { exhibitId: 'history-wisuda-perdana', z: -14.5, y: 4.65, width: 1.15, height: 1.45, frameColor: '#3d2516' },
+  { exhibitId: 'history-transformation', z: -14.5, y: 2.80, width: 1.3, height: 1.05, frameColor: '#d4af37' },
 ]
+
+interface ExhibitPlaqueProps {
+  title: string
+  period?: string
+  width: number
+  frameHeight: number
+}
+
+const ExhibitPlaque = memo(function ExhibitPlaque({
+  title,
+  period,
+  width,
+  frameHeight,
+}: ExhibitPlaqueProps) {
+  const plaqueW = Math.min(Math.max(width * 0.85, 0.9), 1.35)
+  const plaqueH = 0.16
+
+  const texture = useMemo(() => {
+    const canvas = document.createElement('canvas')
+    canvas.width = 1024
+    canvas.height = 256
+    const ctx = canvas.getContext('2d')
+    if (ctx) {
+      // 1. Prestigious Deep Royal UNDIP Navy Blue Enamel Plaque Background
+      const grad = ctx.createLinearGradient(0, 0, 0, 256)
+      grad.addColorStop(0, '#102544')
+      grad.addColorStop(0.5, '#0b1a30')
+      grad.addColorStop(1, '#06101e')
+      ctx.fillStyle = grad
+      ctx.fillRect(0, 0, 1024, 256)
+
+      // Horizontal satin sheen
+      const sheen = ctx.createLinearGradient(0, 0, 1024, 0)
+      sheen.addColorStop(0, 'rgba(212, 175, 55, 0.05)')
+      sheen.addColorStop(0.5, 'rgba(255, 255, 255, 0.12)')
+      sheen.addColorStop(1, 'rgba(212, 175, 55, 0.05)')
+      ctx.fillStyle = sheen
+      ctx.fillRect(0, 0, 1024, 256)
+
+      // 2. Antique Gold Double Border
+      ctx.strokeStyle = '#d4af37'
+      ctx.lineWidth = 6
+      ctx.strokeRect(10, 10, 1004, 236)
+
+      ctx.strokeStyle = '#ffe89c'
+      ctx.lineWidth = 2
+      ctx.strokeRect(18, 18, 988, 220)
+
+      // Corner diamonds
+      const drawCornerDiamond = (x: number, y: number) => {
+        ctx.fillStyle = '#ffd700'
+        ctx.beginPath()
+        ctx.moveTo(x, y - 6)
+        ctx.lineTo(x + 6, y)
+        ctx.lineTo(x, y + 6)
+        ctx.lineTo(x - 6, y)
+        ctx.closePath()
+        ctx.fill()
+      }
+      drawCornerDiamond(18, 18)
+      drawCornerDiamond(1006, 18)
+      drawCornerDiamond(18, 238)
+      drawCornerDiamond(1006, 238)
+
+      // 3. Exhibition Title (Clean, crisp, uppercase)
+      const cleanTitle = title.replace(/\([^)]*\)/g, '').trim()
+      ctx.textAlign = 'center'
+      ctx.textBaseline = 'middle'
+
+      let fontSize = 44
+      ctx.font = `bold ${fontSize}px "Cinzel", "Times New Roman", Georgia, serif`
+      let measured = ctx.measureText(cleanTitle.toUpperCase())
+      while (measured.width > 940 && fontSize > 22) {
+        fontSize -= 2
+        ctx.font = `bold ${fontSize}px "Cinzel", "Times New Roman", Georgia, serif`
+        measured = ctx.measureText(cleanTitle.toUpperCase())
+      }
+
+      const titleY = period ? 95 : 128
+      // Deep drop shadow
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.95)'
+      ctx.shadowBlur = 6
+      ctx.shadowOffsetY = 3
+      ctx.fillStyle = '#ffffff'
+      ctx.fillText(cleanTitle.toUpperCase(), 512, titleY)
+
+      ctx.shadowBlur = 0
+      ctx.shadowOffsetY = 0
+      ctx.fillStyle = '#ffffff'
+      ctx.fillText(cleanTitle.toUpperCase(), 512, titleY)
+
+      // 4. Period / Year Subtitle
+      if (period) {
+        ctx.fillStyle = '#ffd54f'
+        ctx.font = 'italic bold 28px "Cinzel", "Times New Roman", Georgia, serif'
+        ctx.fillText(`—   ${period.toUpperCase()}   —`, 512, 175)
+      }
+    }
+
+    const tex = new THREE.CanvasTexture(canvas)
+    tex.colorSpace = THREE.SRGBColorSpace
+    tex.anisotropy = 16
+    tex.minFilter = THREE.LinearMipmapLinearFilter
+    tex.magFilter = THREE.LinearFilter
+    tex.generateMipmaps = true
+    return tex
+  }, [title, period])
+
+  return (
+    <group position={[0, -frameHeight / 2 - 0.11, 0.02]}>
+      {/* Dark Walnut Plaque Base */}
+      <mesh position={[0, 0, -0.005]} castShadow>
+        <boxGeometry args={[plaqueW, plaqueH, 0.015]} />
+        <meshStandardMaterial color="#22150a" roughness={0.6} />
+      </mesh>
+      {/* Gold Trim Rim */}
+      <mesh position={[0, 0, 0.004]}>
+        <boxGeometry args={[plaqueW - 0.01, plaqueH - 0.01, 0.008]} />
+        <meshStandardMaterial color="#d4af37" roughness={0.25} metalness={0.88} />
+      </mesh>
+      {/* Luminous Enamel Plaque Face with Exhibit Title & Period */}
+      <mesh position={[0, 0, 0.01]}>
+        <planeGeometry args={[plaqueW - 0.02, plaqueH - 0.02]} />
+        <meshStandardMaterial
+          map={texture}
+          emissiveMap={texture}
+          emissive="#ffffff"
+          emissiveIntensity={0.28}
+          roughness={0.25}
+          metalness={0.06}
+        />
+      </mesh>
+    </group>
+  )
+})
 
 interface SalonItemProps {
   config: SalonFrameConfig
@@ -150,17 +285,17 @@ const SalonItem = memo(function SalonItem({
         <meshStandardMaterial map={texture} roughness={0.65} />
       </mesh>
 
-      {/* 6. Subtle Plaque Label Below Frame */}
-      <group position={[0, -fh / 2 - 0.08, 0.02]}>
-        <mesh>
-          <boxGeometry args={[Math.min(fw * 0.75, 1.2), 0.08, 0.015]} />
-          <meshStandardMaterial color="#f7f4eb" roughness={0.8} />
-        </mesh>
-      </group>
+      {/* 6. Museum Plaque Label Below Frame */}
+      <ExhibitPlaque
+        title={exhibit.title}
+        period={exhibit.period}
+        width={fw}
+        frameHeight={fh}
+      />
 
       {/* 7. Hover Line */}
       {(isHovered || isSelected) && (
-        <mesh position={[0, -fh / 2 - 0.15, 0.02]}>
+        <mesh position={[0, -fh / 2 - 0.21, 0.02]}>
           <boxGeometry args={[fw * 0.9, 0.03, 0.01]} />
           <meshBasicMaterial color="#d4af37" />
         </mesh>
@@ -186,7 +321,7 @@ interface ActiveTrackSpotlightProps {
 
 function ActiveTrackSpotlight({ z }: ActiveTrackSpotlightProps) {
   return (
-    <group position={[HISTORY_WALL_X - 0.8, 5.15, z]}>
+    <group position={[HISTORY_WALL_X - 0.8, 5.95, z]}>
       {/* Track Stem Connector attaching canister to horizontal pole */}
       <mesh position={[0, 0.045, 0]}>
         <cylinderGeometry args={[0.012, 0.012, 0.08, 8]} />
@@ -238,9 +373,9 @@ export const HistoryArchivesWing = memo(function HistoryArchivesWing({
   }, [])
 
   return (
-    <CulledEntity position={[HISTORY_WALL_X, 3.0, -4.5]} radius={13.0} maxDistance={38} name="history-archives-wing">
+    <CulledEntity position={[HISTORY_WALL_X, 3.8, -4.5]} radius={13.5} maxDistance={38} name="history-archives-wing">
       {/* Horizontal Museum Track-Lighting Beam running above the history gallery wall */}
-      <group position={[HISTORY_WALL_X - 0.8, 5.2, -4.5]}>
+      <group position={[HISTORY_WALL_X - 0.8, 6.0, -4.5]}>
         {/* Main Track Rail */}
         <mesh>
           <boxGeometry args={[0.07, 0.07, 23.0]} />

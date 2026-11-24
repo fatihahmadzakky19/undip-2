@@ -202,9 +202,9 @@ export const FoundersWing = memo(function FoundersWing({
       {/* ============================================================
           SECTION A: 5 TOKOH PENDIRI UTAMA UNDIP (Z = 8.5 to 0.5)
           ============================================================ */}
-      <CulledEntity position={[FOUNDERS_WALL_X, 3.2, 4.5]} radius={6.0} maxDistance={36} name="founders-section-a">
+      <CulledEntity position={[FOUNDERS_WALL_X, 3.8, 4.5]} radius={6.5} maxDistance={38} name="founders-section-a">
         {/* Section A Banner Header */}
-        <group position={[FOUNDERS_WALL_X + 0.1, 4.45, 4.5]} rotation={[0, Math.PI / 2, 0]}>
+        <group position={[FOUNDERS_WALL_X + 0.1, 5.25, 4.5]} rotation={[0, Math.PI / 2, 0]}>
           <mesh>
             <boxGeometry args={[9.5, 0.52, 0.08]} />
             <meshStandardMaterial color="#142e56" roughness={0.35} metalness={0.3} />
@@ -245,13 +245,13 @@ export const FoundersWing = memo(function FoundersWing({
       </CulledEntity>
 
       {/* Architectural Fluted Divider Pilaster between Section A and Section B */}
-      <group position={[FOUNDERS_WALL_X + 0.08, 2.5, -1.0]} rotation={[0, Math.PI / 2, 0]}>
+      <group position={[FOUNDERS_WALL_X + 0.08, 3.0, -1.0]} rotation={[0, Math.PI / 2, 0]}>
         <mesh>
-          <boxGeometry args={[0.3, 5.0, 0.12]} />
+          <boxGeometry args={[0.3, 6.0, 0.12]} />
           <meshStandardMaterial color="#2d190d" roughness={0.5} />
         </mesh>
         <mesh position={[0, 0, 0.07]}>
-          <boxGeometry args={[0.08, 4.8, 0.02]} />
+          <boxGeometry args={[0.08, 5.8, 0.02]} />
           <meshStandardMaterial color="#d4af37" roughness={0.25} metalness={0.88} />
         </mesh>
       </group>
@@ -259,9 +259,9 @@ export const FoundersWing = memo(function FoundersWing({
       {/* ============================================================
           SECTION B: 13 TOKOH DIREKTORAT & REKTORAT (Z = -2.5 to -21.7)
           ============================================================ */}
-      <CulledEntity position={[FOUNDERS_WALL_X, 3.2, -12.1]} radius={11.5} maxDistance={38} name="founders-section-b">
+      <CulledEntity position={[FOUNDERS_WALL_X, 3.8, -12.1]} radius={12.0} maxDistance={40} name="founders-section-b">
         {/* Section B Banner Header */}
-        <group position={[FOUNDERS_WALL_X + 0.1, 4.45, -12.1]} rotation={[0, Math.PI / 2, 0]}>
+        <group position={[FOUNDERS_WALL_X + 0.1, 5.25, -12.1]} rotation={[0, Math.PI / 2, 0]}>
           <mesh>
             <boxGeometry args={[20.5, 0.52, 0.08]} />
             <meshStandardMaterial color="#102646" roughness={0.4} metalness={0.3} />

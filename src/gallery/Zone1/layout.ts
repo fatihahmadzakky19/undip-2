@@ -44,42 +44,15 @@ export interface BoxCollider {
 
 /**
  * Master List of Solid Physical Object Colliders in the Grand Museum Hall:
- * Prevents camera/visitor from walking through stages, podiums, monuments,
- * directory boards, lounge furniture, tall bookcases, and wall shelves.
+ * Retains solid collision ONLY for objects that are flush against walls (mempet di dinding):
+ * - Wall bookshelves along Left and Right walls
+ * - Tall bookcases in corners/walls
+ * - Rear wall backdrop monolith structure
+ * All free-standing room objects (sofas, tables, standing directory board, podium, stage dais)
+ * are passable so visitors can walk freely through the open hall without collision snagging.
  */
 export const COLLIDERS: readonly BoxCollider[] = [
-  // 1. Panggung Utama & Podium Kehormatan (Ceremonial Stage Dais & Podium)
-  // Stage Tier 1 (5.6m x 3.6m) + Tier 2 (4.8m x 2.8m) + Teak Podium
-  {
-    name: 'ceremonial-stage-and-podium',
-    minX: -2.85,
-    maxX: 2.85,
-    minZ: -20.2,
-    maxZ: -16.35,
-  },
-
-  // 2. Prasasti Pendirian Undip (Sayap Kiri Panggung Utama)
-  // Carved Teak Base (1.75m x 1.35m) & Polished Black Granite Inscription Slab
-  {
-    name: 'monument-prasasti',
-    minX: -4.95,
-    maxX: -3.05,
-    minZ: -20.8,
-    maxZ: -19.25,
-  },
-
-  // 3. Tiang Bendera Upacara (Sayap Kanan Panggung Utama)
-  // Teakwood Flag Stand (1.9m x 0.7m) & Brass Flagpoles
-  {
-    name: 'flag-stand',
-    minX: 3.0,
-    maxX: 5.0,
-    minZ: -20.5,
-    maxZ: -19.5,
-  },
-
-  // 4. Struktur Latar Belakang Panggung Utama (Navy Backdrop & Wainscoting)
-  // Blocks walking behind the elevated backdrop monolith
+  // 1. Struktur Latar Belakang Panggung Utama (Navy Backdrop & Wainscoting - mempet dinding belakang)
   {
     name: 'stage-rear-structure',
     minX: -4.6,
@@ -88,37 +61,7 @@ export const COLLIDERS: readonly BoxCollider[] = [
     maxZ: -20.0,
   },
 
-  // 5. Standing Directory Board (Papan Panduan Navigasi & Peta Museum)
-  // Located at X = 3.8, Z = 8.5 with width ~1.4m, depth ~0.7m, rotated -45 deg
-  {
-    name: 'directory-board',
-    minX: 3.05,
-    maxX: 4.55,
-    minZ: 7.75,
-    maxZ: 9.25,
-  },
-
-  // 6. Visitor Lounge Kiri (Sofa Velvet & Meja Kaca)
-  // Positioned at X = -4.2, Z = 3.8 (allowing generous walkway next to wall bookshelves)
-  {
-    name: 'visitor-lounge-left',
-    minX: -5.45,
-    maxX: -2.95,
-    minZ: 2.7,
-    maxZ: 4.9,
-  },
-
-  // 7. Visitor Lounge Kanan (Sofa Velvet & Meja Kaca)
-  // Positioned at X = 4.2, Z = 3.8 (allowing generous walkway next to wall bookshelves)
-  {
-    name: 'visitor-lounge-right',
-    minX: 2.95,
-    maxX: 5.45,
-    minZ: 2.7,
-    maxZ: 4.9,
-  },
-
-  // 8. Lemari Buku Vertikal (Tall Bookcases) di 4 Sudut Ruangan
+  // 2. Lemari Buku Vertikal (Tall Bookcases) di 4 Sudut Dinding
   // Depan Kiri (dekat pintu masuk)
   {
     name: 'tall-bookcase-front-left',
@@ -135,7 +78,7 @@ export const COLLIDERS: readonly BoxCollider[] = [
     minZ: 9.6,
     maxZ: 11.6,
   },
-  // Belakang Kiri (mengapit panggung)
+  // Belakang Kiri (mengapit panggung pada dinding)
   {
     name: 'tall-bookcase-back-left',
     minX: -7.6,
@@ -143,7 +86,7 @@ export const COLLIDERS: readonly BoxCollider[] = [
     minZ: -24.6,
     maxZ: -22.6,
   },
-  // Belakang Kanan (mengapit panggung)
+  // Belakang Kanan (mengapit panggung pada dinding)
   {
     name: 'tall-bookcase-back-right',
     minX: 6.7,
@@ -152,7 +95,7 @@ export const COLLIDERS: readonly BoxCollider[] = [
     maxZ: -22.6,
   },
 
-  // 9. Rak Buku Dinding Sayap Kiri (Wall Bookshelves under Founders Wing)
+  // 3. Rak Buku Dinding Sayap Kiri (Wall Bookshelves mempet dinding kiri)
   {
     name: 'wall-bookshelf-founders',
     minX: -7.6,
@@ -175,7 +118,7 @@ export const COLLIDERS: readonly BoxCollider[] = [
     maxZ: -13.6,
   },
 
-  // 10. Rak Buku Dinding Sayap Kanan (Wall Bookshelves under History Wing)
+  // 4. Rak Buku Dinding Sayap Kanan (Wall Bookshelves mempet dinding kanan)
   {
     name: 'wall-bookshelf-penegerian',
     minX: 7.05,
@@ -271,7 +214,7 @@ export const FOUNDERS_WALL_X = -(HALL.halfWidth - 0.16)
 export const FOUNDERS_COUNT = UNDIP_FOUNDERS.length // 13
 export const FOUNDERS_START_Z = 8.5
 export const FOUNDERS_SPACING = 2.3
-export const FOUNDERS_FRAME_Y = 2.8
+export const FOUNDERS_FRAME_Y = 3.45
 
 /** Right Side (Section 2: History & Archives Wing) */
 export const HISTORY_WALL_X = HALL.halfWidth - 0.16

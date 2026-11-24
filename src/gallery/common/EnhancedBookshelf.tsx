@@ -74,79 +74,101 @@ export const EnhancedBookshelf = memo(function EnhancedBookshelf({
   // Canvas texture for luxury illuminated pediment plaque
   const pedimentPlateTexture = useMemo(() => {
     const canvas = document.createElement('canvas')
-    canvas.width = 2048
-    canvas.height = 256
+    canvas.width = 4096
+    canvas.height = 512
     const ctx = canvas.getContext('2d')
     if (ctx) {
       // 1. Prestigious Deep Royal UNDIP Navy Blue Enamel Background
-      const bgGrad = ctx.createLinearGradient(0, 0, 0, 256)
-      bgGrad.addColorStop(0, '#0f2b5a')
-      bgGrad.addColorStop(0.3, '#0b1e3d')
-      bgGrad.addColorStop(0.7, '#07152b')
-      bgGrad.addColorStop(1, '#040d1c')
+      const bgGrad = ctx.createLinearGradient(0, 0, 0, 512)
+      bgGrad.addColorStop(0, '#0f2f5c')
+      bgGrad.addColorStop(0.3, '#0b2042')
+      bgGrad.addColorStop(0.7, '#07162e')
+      bgGrad.addColorStop(1, '#040d1a')
       ctx.fillStyle = bgGrad
-      ctx.fillRect(0, 0, 2048, 256)
+      ctx.fillRect(0, 0, 4096, 512)
 
       // Horizontal satin sheen
-      const sheenGrad = ctx.createLinearGradient(0, 0, 2048, 0)
+      const sheenGrad = ctx.createLinearGradient(0, 0, 4096, 0)
       sheenGrad.addColorStop(0, 'rgba(212, 175, 55, 0.05)')
-      sheenGrad.addColorStop(0.2, 'rgba(255, 255, 255, 0.12)')
-      sheenGrad.addColorStop(0.5, 'rgba(255, 235, 170, 0.22)')
-      sheenGrad.addColorStop(0.8, 'rgba(255, 255, 255, 0.12)')
+      sheenGrad.addColorStop(0.2, 'rgba(255, 255, 255, 0.10)')
+      sheenGrad.addColorStop(0.5, 'rgba(255, 235, 170, 0.20)')
+      sheenGrad.addColorStop(0.8, 'rgba(255, 255, 255, 0.10)')
       sheenGrad.addColorStop(1, 'rgba(212, 175, 55, 0.05)')
       ctx.fillStyle = sheenGrad
-      ctx.fillRect(0, 0, 2048, 256)
+      ctx.fillRect(0, 0, 4096, 512)
 
       // 2. Multi-Tiered Gilded Antique Gold Borders
-      ctx.strokeStyle = '#d4af37'
-      ctx.lineWidth = 10
-      ctx.strokeRect(12, 12, 2024, 232)
+      ctx.strokeStyle = '#dfba45'
+      ctx.lineWidth = 14
+      ctx.strokeRect(16, 16, 4064, 480)
 
-      ctx.strokeStyle = '#ffe89c'
-      ctx.lineWidth = 3
-      ctx.strokeRect(26, 26, 1996, 204)
+      ctx.strokeStyle = '#fff0a8'
+      ctx.lineWidth = 4
+      ctx.strokeRect(34, 34, 4028, 444)
 
       // Corner Ornamental Diamonds
       const drawCornerDiamond = (x: number, y: number) => {
         ctx.fillStyle = '#ffd700'
         ctx.beginPath()
-        ctx.moveTo(x, y - 8)
-        ctx.lineTo(x + 8, y)
-        ctx.lineTo(x, y + 8)
-        ctx.lineTo(x - 8, y)
+        ctx.moveTo(x, y - 10)
+        ctx.lineTo(x + 10, y)
+        ctx.lineTo(x, y + 10)
+        ctx.lineTo(x - 10, y)
         ctx.closePath()
         ctx.fill()
-        ctx.strokeStyle = '#fff'
-        ctx.lineWidth = 1.5
+        ctx.strokeStyle = '#ffffff'
+        ctx.lineWidth = 2
         ctx.stroke()
       }
-      drawCornerDiamond(26, 26)
-      drawCornerDiamond(2022, 26)
-      drawCornerDiamond(26, 230)
-      drawCornerDiamond(2022, 230)
+      drawCornerDiamond(34, 34)
+      drawCornerDiamond(4062, 34)
+      drawCornerDiamond(34, 478)
+      drawCornerDiamond(4062, 478)
 
-      // Top & Bottom Gold Accent Accent Stripes
-      ctx.fillStyle = '#d4af37'
-      ctx.fillRect(60, 36, 1928, 2)
-      ctx.fillRect(60, 218, 1928, 2)
+      // Top & Bottom Gold Accent Stripes
+      ctx.fillStyle = '#dfba45'
+      ctx.fillRect(80, 52, 3936, 4)
+      ctx.fillRect(80, 456, 3936, 4)
 
-      // 3. High-Contrast Luminous White-Gold Typography
-      ctx.shadowColor = 'rgba(255, 225, 120, 0.85)'
-      ctx.shadowBlur = 16
-      ctx.fillStyle = '#ffffff'
-      ctx.font = 'bold 50px "Cinzel", "Times New Roman", Georgia, serif'
+      // 3. High-Contrast Ultra-Crisp Luminous Typography
+      // Automatically sanitize and strip any "ZONA ... —" or "ZONA ... -" prefix
+      const cleanTitle = categoryTitle.replace(/^ZONA\s+[\d\s&–—,-]+\s*[—–-]\s*/i, '').trim()
+      const fullText = `✦   ${cleanTitle.toUpperCase()}   ✦`
+      const maxTextW = 3800
+      let fontSize = 140
+      ctx.font = `bold ${fontSize}px "Cinzel", "Times New Roman", Georgia, serif`
+      let measured = ctx.measureText(fullText)
+      if (measured.width > maxTextW && measured.width > 0) {
+        fontSize = Math.max(70, Math.floor(fontSize * (maxTextW / measured.width)))
+        ctx.font = `bold ${fontSize}px "Cinzel", "Times New Roman", Georgia, serif`
+      }
+
       ctx.textAlign = 'center'
       ctx.textBaseline = 'middle'
 
-      ctx.fillText(`✦   ${categoryTitle.toUpperCase()}   ✦`, 1024, 128)
+      // Pass 1: Crisp deep drop shadow
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.98)'
+      ctx.shadowBlur = 8
+      ctx.shadowOffsetX = 0
+      ctx.shadowOffsetY = 5
+      ctx.fillStyle = '#ffffff'
+      ctx.fillText(fullText, 2048, 256 + 3)
 
-      // Second crisp pass without shadow for razor sharpness
+      // Pass 2: Pure sharp luminous white foreground
       ctx.shadowBlur = 0
-      ctx.fillStyle = '#fffdf0'
-      ctx.fillText(`✦   ${categoryTitle.toUpperCase()}   ✦`, 1024, 128)
+      ctx.shadowOffsetX = 0
+      ctx.shadowOffsetY = 0
+      ctx.fillStyle = '#ffffff'
+      ctx.fillText(fullText, 2048, 256 + 3)
     }
+
     const tex = new THREE.CanvasTexture(canvas)
     tex.colorSpace = THREE.SRGBColorSpace
+    tex.anisotropy = 16
+    tex.minFilter = THREE.LinearMipmapLinearFilter
+    tex.magFilter = THREE.LinearFilter
+    tex.generateMipmaps = true
+    tex.needsUpdate = true
     return tex
   }, [categoryTitle])
 
@@ -197,8 +219,11 @@ export const EnhancedBookshelf = memo(function EnhancedBookshelf({
           <planeGeometry args={[bw * 0.91, 0.21]} />
           <meshStandardMaterial
             map={pedimentPlateTexture}
-            roughness={0.35}
-            metalness={0.05}
+            emissiveMap={pedimentPlateTexture}
+            emissive="#ffffff"
+            emissiveIntensity={0.35}
+            roughness={0.2}
+            metalness={0.06}
           />
         </mesh>
 

@@ -195,7 +195,7 @@ export function MuseumGallery() {
               position={[-halfW + 0.18, 0, 4.5]}
               rotationY={Math.PI / 2}
               length={8.2}
-              categoryTitle="ZONA 1 — ARSIP SEJARAH PENDIRIAN & STATUTA 1956–1961"
+              categoryTitle="ARSIP SEJARAH PENDIRIAN & STATUTA 1956–1961"
               interactiveBookIds={['book-akta-notaris-1956', 'book-statuta-perdana-1957', 'book-biografi-imam-bardjo']}
               onSelectBook={handleSelectBook}
               onHoverBook={handleHover}
@@ -209,7 +209,7 @@ export function MuseumGallery() {
               position={[-halfW + 0.18, 0, -7.5]}
               rotationY={Math.PI / 2}
               length={9.6}
-              categoryTitle="ZONA 1 & 2 — KEPEMIMPINAN REKTORAT & KRONIKA FAKULTAS"
+              categoryTitle="KEPEMIMPINAN REKTORAT & KRONIKA FAKULTAS"
               interactiveBookIds={['book-sejarah-14-fakultas', 'book-pidato-dies-sukarno-1960']}
               onSelectBook={handleSelectBook}
               onHoverBook={handleHover}
@@ -223,7 +223,7 @@ export function MuseumGallery() {
               position={[-halfW + 0.18, 0, -18.5]}
               rotationY={Math.PI / 2}
               length={9.6}
-              categoryTitle="ZONA 3 — DOKUMENTASI REGALIA, FILSAFAH KESATRIA & HUMANIORA"
+              categoryTitle="DOKUMENTASI REGALIA, FILSAFAH KESATRIA & HUMANIORA"
               interactiveBookIds={['book-falsafah-kesatria-diponegoro', 'book-esai-eko-budiharjo', 'book-regalia-tongkat-rektor']}
               onSelectBook={handleSelectBook}
               onHoverBook={handleHover}
@@ -232,7 +232,7 @@ export function MuseumGallery() {
           </CulledEntity>
 
           {/* ============================================================
-              2. RIGHT WALL: GALERI SEJARAH 5 ZONA & RAK BUKU
+              2. RIGHT WALL: GALERI SEJARAH & RAK BUKU
               ============================================================ */}
           <HistoryArchivesWing
             selectedExhibitId={selectedExhibitId}
@@ -247,7 +247,7 @@ export function MuseumGallery() {
               position={[halfW - 0.18, 0, 1.1]}
               rotationY={-Math.PI / 2}
               length={9.8}
-              categoryTitle="ZONA 1 & 2 — DOKUMEN PENEGERIAN PP 7/1961 & MASTERPLAN TEMBALANG"
+              categoryTitle="DOKUMEN PENEGERIAN PP 7/1961 & MASTERPLAN TEMBALANG"
               interactiveBookIds={['book-pp-no-7-1961', 'book-pidato-dies-sukarno-1960', 'book-masterplan-tembalang-1977']}
               onSelectBook={handleSelectBook}
               onHoverBook={handleHover}
@@ -261,7 +261,7 @@ export function MuseumGallery() {
               position={[halfW - 0.18, 0, -9.5]}
               rotationY={-Math.PI / 2}
               length={9.8}
-              categoryTitle="ZONA 4 — DOKUMENTASI KAMPUS MODERN TEMBALANG, MULADI DOME & RSND"
+              categoryTitle="DOKUMENTASI KAMPUS MODERN TEMBALANG, MULADI DOME & RSND"
               interactiveBookIds={['book-muladi-dome-monumen', 'book-rsnd-pendidikan-medis', 'book-ptnbh-transformasi-global']}
               onSelectBook={handleSelectBook}
               onHoverBook={handleHover}
@@ -275,7 +275,7 @@ export function MuseumGallery() {
               position={[halfW - 0.18, 0, -18.5]}
               rotationY={-Math.PI / 2}
               length={7.6}
-              categoryTitle="ZONA 5 — BUKU PUTIH CETRAWISMA 2045, AI & GREEN CAMPUS NET ZERO"
+              categoryTitle="BUKU PUTIH CETRAWISMA 2045, AI & GREEN CAMPUS NET ZERO"
               interactiveBookIds={['book-undip-2045-blueprint', 'book-green-campus-net-zero', 'book-alumni-global-network']}
               onSelectBook={handleSelectBook}
               onHoverBook={handleHover}
