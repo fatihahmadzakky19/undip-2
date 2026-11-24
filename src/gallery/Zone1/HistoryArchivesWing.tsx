@@ -69,94 +69,177 @@ interface ExhibitPlaqueProps {
   frameHeight: number
 }
 
+function splitBalancedTitle(text: string, maxSingleLineChars = 30): string[] {
+  if (text.length <= maxSingleLineChars) return [text]
+  const words = text.split(/\s+/)
+  if (words.length <= 1) return [text]
+
+  let bestIdx = 1
+  let minDiff = Infinity
+  for (let i = 1; i < words.length; i++) {
+    const l1 = words.slice(0, i).join(' ')
+    const l2 = words.slice(i).join(' ')
+    const diff = Math.abs(l1.length - l2.length)
+    if (diff < minDiff) {
+      minDiff = diff
+      bestIdx = i
+    }
+  }
+  return [words.slice(0, bestIdx).join(' '), words.slice(bestIdx).join(' ')]
+}
+
 const ExhibitPlaque = memo(function ExhibitPlaque({
   title,
   period,
   width,
   frameHeight,
 }: ExhibitPlaqueProps) {
-  const plaqueW = Math.min(Math.max(width * 0.85, 0.9), 1.35)
-  const plaqueH = 0.16
+  const plaqueW = Math.min(Math.max(width * 0.90, 1.05), 1.65)
+  const plaqueH = 0.22
 
   const texture = useMemo(() => {
+    const aspect = plaqueW / plaqueH
+    const canvasWidth = 2048
+    const canvasHeight = Math.max(320, Math.round(canvasWidth / aspect))
+
     const canvas = document.createElement('canvas')
-    canvas.width = 1024
-    canvas.height = 256
+    canvas.width = canvasWidth
+    canvas.height = canvasHeight
     const ctx = canvas.getContext('2d')
+
     if (ctx) {
       // 1. Prestigious Deep Royal UNDIP Navy Blue Enamel Plaque Background
-      const grad = ctx.createLinearGradient(0, 0, 0, 256)
-      grad.addColorStop(0, '#102544')
-      grad.addColorStop(0.5, '#0b1a30')
-      grad.addColorStop(1, '#06101e')
+      const grad = ctx.createLinearGradient(0, 0, 0, canvasHeight)
+      grad.addColorStop(0, '#122646')
+      grad.addColorStop(0.5, '#0b1b32')
+      grad.addColorStop(1, '#06101f')
       ctx.fillStyle = grad
-      ctx.fillRect(0, 0, 1024, 256)
+      ctx.fillRect(0, 0, canvasWidth, canvasHeight)
 
-      // Horizontal satin sheen
-      const sheen = ctx.createLinearGradient(0, 0, 1024, 0)
-      sheen.addColorStop(0, 'rgba(212, 175, 55, 0.05)')
-      sheen.addColorStop(0.5, 'rgba(255, 255, 255, 0.12)')
-      sheen.addColorStop(1, 'rgba(212, 175, 55, 0.05)')
+      // Satin Sheen Reflection
+      const sheen = ctx.createLinearGradient(0, 0, canvasWidth, 0)
+      sheen.addColorStop(0, 'rgba(212, 175, 55, 0.06)')
+      sheen.addColorStop(0.5, 'rgba(255, 255, 255, 0.15)')
+      sheen.addColorStop(1, 'rgba(212, 175, 55, 0.06)')
       ctx.fillStyle = sheen
-      ctx.fillRect(0, 0, 1024, 256)
+      ctx.fillRect(0, 0, canvasWidth, canvasHeight)
 
       // 2. Antique Gold Double Border
+      const border1 = 12
+      const border2 = 22
       ctx.strokeStyle = '#d4af37'
       ctx.lineWidth = 6
-      ctx.strokeRect(10, 10, 1004, 236)
+      ctx.strokeRect(border1, border1, canvasWidth - border1 * 2, canvasHeight - border1 * 2)
 
       ctx.strokeStyle = '#ffe89c'
-      ctx.lineWidth = 2
-      ctx.strokeRect(18, 18, 988, 220)
+      ctx.lineWidth = 2.5
+      ctx.strokeRect(border2, border2, canvasWidth - border2 * 2, canvasHeight - border2 * 2)
 
-      // Corner diamonds
-      const drawCornerDiamond = (x: number, y: number) => {
+      // Corner gold diamonds
+      const drawDiamond = (x: number, y: number) => {
         ctx.fillStyle = '#ffd700'
         ctx.beginPath()
-        ctx.moveTo(x, y - 6)
-        ctx.lineTo(x + 6, y)
-        ctx.lineTo(x, y + 6)
-        ctx.lineTo(x - 6, y)
+        ctx.moveTo(x, y - 9)
+        ctx.lineTo(x + 9, y)
+        ctx.lineTo(x, y + 9)
+        ctx.lineTo(x - 9, y)
         ctx.closePath()
         ctx.fill()
       }
-      drawCornerDiamond(18, 18)
-      drawCornerDiamond(1006, 18)
-      drawCornerDiamond(18, 238)
-      drawCornerDiamond(1006, 238)
+      drawDiamond(border2, border2)
+      drawDiamond(canvasWidth - border2, border2)
+      drawDiamond(border2, canvasHeight - border2)
+      drawDiamond(canvasWidth - border2, canvasHeight - border2)
 
-      // 3. Exhibition Title (Clean, crisp, uppercase)
-      const cleanTitle = title.replace(/\([^)]*\)/g, '').trim()
+      // 3. Process Title & Subtitle
+      const cleanTitle = title.replace(/\([^)]*\)/g, '').trim().toUpperCase()
+      const cleanPeriod = period ? period.replace(/^—\s*|\s*—$/g, '').trim().toUpperCase() : ''
+      const lines = splitBalancedTitle(cleanTitle, 30)
+
+      const fontStack = '"Cinzel", "Segoe UI", "Arial Black", "Times New Roman", sans-serif'
+      const maxTextWidth = canvasWidth - 140
+
+      let fontSize = lines.length === 2 ? 60 : 68
+      ctx.font = `bold ${fontSize}px ${fontStack}`
+
+      const exceedsWidth = () =>
+        lines.some((line) => ctx.measureText(line).width > maxTextWidth)
+
+      while (exceedsWidth() && fontSize > 28) {
+        fontSize -= 2
+        ctx.font = `bold ${fontSize}px ${fontStack}`
+      }
+
       ctx.textAlign = 'center'
       ctx.textBaseline = 'middle'
 
-      let fontSize = 44
-      ctx.font = `bold ${fontSize}px "Cinzel", "Times New Roman", Georgia, serif`
-      let measured = ctx.measureText(cleanTitle.toUpperCase())
-      while (measured.width > 940 && fontSize > 22) {
-        fontSize -= 2
-        ctx.font = `bold ${fontSize}px "Cinzel", "Times New Roman", Georgia, serif`
-        measured = ctx.measureText(cleanTitle.toUpperCase())
+      const renderTitleText = (text: string, y: number) => {
+        // Heavy dark stroke for maximum contrast against navy enamel
+        ctx.strokeStyle = '#050c18'
+        ctx.lineWidth = 8
+        ctx.strokeText(text, canvasWidth / 2, y)
+
+        // Drop shadow for depth
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.95)'
+        ctx.shadowBlur = 8
+        ctx.shadowOffsetY = 3
+        ctx.fillStyle = '#ffffff'
+        ctx.fillText(text, canvasWidth / 2, y)
+
+        // Second crisp fill
+        ctx.shadowBlur = 0
+        ctx.shadowOffsetY = 0
+        ctx.fillStyle = '#ffffff'
+        ctx.fillText(text, canvasWidth / 2, y)
       }
 
-      const titleY = period ? 95 : 128
-      // Deep drop shadow
-      ctx.shadowColor = 'rgba(0, 0, 0, 0.95)'
-      ctx.shadowBlur = 6
-      ctx.shadowOffsetY = 3
-      ctx.fillStyle = '#ffffff'
-      ctx.fillText(cleanTitle.toUpperCase(), 512, titleY)
+      const renderPeriodText = (text: string, y: number) => {
+        const periodFontSize = Math.min(38, Math.round(fontSize * 0.65))
+        ctx.font = `italic bold ${periodFontSize}px ${fontStack}`
 
-      ctx.shadowBlur = 0
-      ctx.shadowOffsetY = 0
-      ctx.fillStyle = '#ffffff'
-      ctx.fillText(cleanTitle.toUpperCase(), 512, titleY)
+        ctx.strokeStyle = '#050c18'
+        ctx.lineWidth = 5
+        ctx.strokeText(`—   ${text}   —`, canvasWidth / 2, y)
 
-      // 4. Period / Year Subtitle
-      if (period) {
-        ctx.fillStyle = '#ffd54f'
-        ctx.font = 'italic bold 28px "Cinzel", "Times New Roman", Georgia, serif'
-        ctx.fillText(`—   ${period.toUpperCase()}   —`, 512, 175)
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.9)'
+        ctx.shadowBlur = 6
+        ctx.shadowOffsetY = 2
+        ctx.fillStyle = '#ffd700'
+        ctx.fillText(`—   ${text}   —`, canvasWidth / 2, y)
+
+        ctx.shadowBlur = 0
+        ctx.shadowOffsetY = 0
+        ctx.fillStyle = '#ffe082'
+        ctx.fillText(`—   ${text}   —`, canvasWidth / 2, y)
+      }
+
+      if (cleanPeriod) {
+        if (lines.length === 2) {
+          const lineSpacing = fontSize * 1.18
+          const titleCenterY = canvasHeight * 0.38
+          const line1Y = titleCenterY - lineSpacing * 0.5
+          const line2Y = titleCenterY + lineSpacing * 0.5
+          const periodY = Math.min(canvasHeight * 0.80, line2Y + fontSize * 0.88)
+
+          renderTitleText(lines[0], line1Y)
+          renderTitleText(lines[1], line2Y)
+          renderPeriodText(cleanPeriod, periodY)
+        } else {
+          const titleY = canvasHeight * 0.40
+          const periodY = canvasHeight * 0.74
+          renderTitleText(lines[0], titleY)
+          renderPeriodText(cleanPeriod, periodY)
+        }
+      } else {
+        if (lines.length === 2) {
+          const lineSpacing = fontSize * 1.25
+          const line1Y = canvasHeight / 2 - lineSpacing * 0.5
+          const line2Y = canvasHeight / 2 + lineSpacing * 0.5
+          renderTitleText(lines[0], line1Y)
+          renderTitleText(lines[1], line2Y)
+        } else {
+          renderTitleText(lines[0], canvasHeight / 2)
+        }
       }
     }
 
@@ -167,10 +250,10 @@ const ExhibitPlaque = memo(function ExhibitPlaque({
     tex.magFilter = THREE.LinearFilter
     tex.generateMipmaps = true
     return tex
-  }, [title, period])
+  }, [title, period, plaqueW, plaqueH])
 
   return (
-    <group position={[0, -frameHeight / 2 - 0.11, 0.02]}>
+    <group position={[0, -frameHeight / 2 - 0.13, 0.02]}>
       {/* Dark Walnut Plaque Base */}
       <mesh position={[0, 0, -0.005]} castShadow>
         <boxGeometry args={[plaqueW, plaqueH, 0.015]} />
@@ -188,8 +271,8 @@ const ExhibitPlaque = memo(function ExhibitPlaque({
           map={texture}
           emissiveMap={texture}
           emissive="#ffffff"
-          emissiveIntensity={0.28}
-          roughness={0.25}
+          emissiveIntensity={0.45}
+          roughness={0.22}
           metalness={0.06}
         />
       </mesh>
@@ -295,7 +378,7 @@ const SalonItem = memo(function SalonItem({
 
       {/* 7. Hover Line */}
       {(isHovered || isSelected) && (
-        <mesh position={[0, -fh / 2 - 0.21, 0.02]}>
+        <mesh position={[0, -fh / 2 - 0.26, 0.02]}>
           <boxGeometry args={[fw * 0.9, 0.03, 0.01]} />
           <meshBasicMaterial color="#d4af37" />
         </mesh>
