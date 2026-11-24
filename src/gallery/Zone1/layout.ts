@@ -28,8 +28,8 @@ export const RUN_SPEED = 7.2 // 2x speed sprint with Shift key
 export const BOUNDS = {
   minX: -(HALL.halfWidth - 0.55), // -7.05m (allows walking freely into side aisles and browsing books)
   maxX: HALL.halfWidth - 0.55,    // 7.05m
-  minZ: HALL.zBack + 1.8,
-  maxZ: HALL.zFront - 0.28, // Flush/mepet right at the entrance doors (Z = 11.72)
+  minZ: HALL.zBack + 0.45,        // -25.55m (allows walking freely all the way behind podium & stage to the back wall)
+  maxZ: HALL.zFront - 0.28,       // Flush/mepet right at the entrance doors (Z = 11.72)
 } as const
 
 export const PLAYER_RADIUS = 0.35
@@ -47,7 +47,7 @@ export interface BoxCollider {
  * Retains solid collision ONLY for objects that are flush against walls (mempet di dinding):
  * - Wall bookshelves along Left and Right walls
  * - Tall bookcases in corners/walls
- * - Rear wall backdrop monolith structure
+ * - Rear wall backdrop monolith structure (flush against the back wall)
  * All free-standing room objects (sofas, tables, standing directory board, podium, stage dais)
  * are passable so visitors can walk freely through the open hall without collision snagging.
  */
@@ -58,7 +58,7 @@ export const COLLIDERS: readonly BoxCollider[] = [
     minX: -4.6,
     maxX: 4.6,
     minZ: -26.0,
-    maxZ: -20.0,
+    maxZ: -25.72,
   },
 
   // 2. Lemari Buku Vertikal (Tall Bookcases) di 4 Sudut Dinding
