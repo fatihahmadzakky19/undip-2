@@ -1,0 +1,27 @@
+/* Base reset so the 3D gallery can fill the viewport. */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+  background: #14100c;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+}
+
+canvas {
+  display: block;
+}
