@@ -9,7 +9,9 @@
  * - Zone 5: Undip Future (Menuju 2045)
  */
 
+export { MuseumApp } from './common/MuseumApp'
 export { MuseumGallery, MuseumGallery as default, MuseumGallery as Zone1, MuseumGallery as Zone1Scene, MuseumGallery as GalleryScene } from './common/MuseumGallery'
+export { Zone2Scene } from './Zone2/Zone2Scene'
 export { WallBookshelf } from './common/WallBookshelf'
 export { EnhancedBookshelf } from './common/EnhancedBookshelf'
 export { ZoneNavigator } from './common/ZoneNavigator'

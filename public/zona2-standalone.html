@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Museum Virtual UNDIP — Zona 2: The Growth of Knowledge</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Segoe+UI:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+    body, html { width: 100%; height: 100%; overflow: hidden; background: #071228; font-family: 'Segoe UI', Tahoma, sans-serif; color: #fff; }
+    #canvas-container { width: 100%; height: 100%; position: absolute; top: 0; left: 0; }
+    
+    /* Top Header Bar */
+    .top-bar { position: fixed; top: 16px; right: 16px; display: flex; gap: 10px; z-index: 100; }
+    .btn-pill { background: rgba(11,26,58,0.9); border: 1.5px solid #d4af37; color: #ffd700; border-radius: 24px; padding: 8px 16px; font-size: 13px; font-weight: 700; cursor: pointer; backdrop-filter: blur(8px); transition: all 0.2s; box-shadow: 0 4px 14px rgba(0,0,0,0.4); display: flex; align-items: center; gap: 6px; }
+    .btn-pill:hover { background: #0e2250; border-color: #ffd700; transform: translateY(-2px); }
+    .btn-pill.active { background: #18453b; border-color: #81c784; color: #fff; }
+
+    /* Sidebar Navigation */
+    .sidebar-btn { position: fixed; top: 16px; left: 16px; z-index: 110; }
+    .sidebar { position: fixed; top: 0; left: 0; bottom: 0; width: 340px; background: linear-gradient(180deg, #0e2250, #0b1a3a, #06101f); border-right: 2px solid #d4af37; z-index: 120; transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); padding: 24px 20px; display: flex; flex-direction: column; gap: 14px; box-shadow: 8px 0 32px rgba(0,0,0,0.6); }
+    .sidebar.open { transform: translateX(0); }
+    .sidebar-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 115; display: none; }
+    .sidebar-backdrop.open { display: block; }
+    .zone-card { background: rgba(6,18,36,0.75); border: 1.5px solid #1b3b68; border-radius: 10px; padding: 12px 14px; cursor: pointer; transition: all 0.2s; }
+    .zone-card:hover { border-color: #d4af37; background: rgba(14,34,80,0.85); }
+    .zone-card.active { border-color: #ffd700; background: linear-gradient(135deg, rgba(20,46,86,0.9), rgba(107,15,26,0.6)); box-shadow: 0 0 16px rgba(212,175,55,0.3); }
+
+    /* Mini-Map 2D */
+    .minimap { position: fixed; top: 68px; right: 16px; background: rgba(11,26,58,0.92); border: 1.5px solid #d4af37; border-radius: 12px; z-index: 100; padding: 10px; box-shadow: 0 6px 24px rgba(0,0,0,0.5); width: 160px; text-align: center; }
+    .minimap-title { font-family: 'Cinzel', serif; font-size: 11px; font-weight: 700; color: #ffd700; margin-bottom: 6px; }
+
+    /* Modals */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 300; display: none; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(6px); }
+    .modal-overlay.open { display: flex; }
+    .modal-box { background: linear-gradient(180deg, #0e2250, #0b1a3a); border: 2px solid #d4af37; border-radius: 16px; width: 620px; max-width: 95vw; max-height: 85vh; padding: 26px; box-shadow: 0 12px 48px rgba(0,0,0,0.8); display: flex; flex-direction: column; gap: 14px; overflow-y: auto; }
+    .modal-badge { display: inline-block; background: #6b0f1a; color: #ffd700; border: 1px solid #d4af37; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 800; }
+    .modal-title { font-family: 'Cinzel', serif; font-size: 22px; color: #fff; margin: 4px 0; }
+    .modal-sub { color: #ffd700; font-size: 13px; font-style: italic; }
+    .modal-desc { color: #e5dec9; font-size: 14.5px; line-height: 1.6; }
+    .btn-gold { align-self: flex-end; background: linear-gradient(135deg, #d4af37, #c9a227); color: #0b1a3a; border: none; font-weight: 700; padding: 8px 22px; border-radius: 8px; cursor: pointer; }
+
+    /* Bottom Hints Bar */
+    .hints-bar { position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%); background: rgba(11,26,58,0.88); border: 1.5px solid #d4af37; border-radius: 20px; padding: 6px 18px; font-size: 12px; display: flex; gap: 10px; align-items: center; pointer-events: none; z-index: 90; box-shadow: 0 4px 16px rgba(0,0,0,0.5); }
+    .key-badge { background: #ffd700; color: #0b1a3a; font-weight: 800; padding: 2px 6px; border-radius: 4px; font-size: 11px; }
+
+    /* Crosshair Center Pointer */
+    .crosshair { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 8px; height: 8px; border-radius: 50%; background: rgba(255,215,0,0.7); pointer-events: none; z-index: 80; border: 1.5px solid #0b1a3a; }
+  </style>
+</head>
+<body>
+  <div id="canvas-container"></div>
+  <div class="crosshair"></div>
+
+  <!-- Top Action Header -->
+  <div class="top-bar">
+    <button id="btn-audio" class="btn-pill" onclick="toggleAudio()">🔇 MUSIK HENING</button>
+    <button id="btn-graphics" class="btn-pill" onclick="openGraphicsModal()">⚙️ GRAFIK (HD)</button>
+  </div>
+
+  <!-- Sidebar Toggle & Drawer -->
+  <button class="btn-pill sidebar-btn" onclick="toggleSidebar()">☰ 5 ZONA MUSEUM</button>
+  <div id="sidebar-backdrop" class="sidebar-backdrop" onclick="toggleSidebar()"></div>
+  <aside id="sidebar" class="sidebar">
+    <div style="border-bottom: 1px solid rgba(212,175,55,0.3); padding-bottom: 12px;">
+      <span class="modal-badge">MUSEUM VIRTUAL 3D</span>
+      <h2 style="font-family:'Cinzel',serif; color:#ffd700; font-size:17px; margin-top:6px;">UNIVERSITAS DIPONEGORO</h2>
+      <p style="font-size:12px; color:#b8c7db;">Daftar Ruangan Pameran Sejarah</p>
+    </div>
+    <div class="zone-card" onclick="alert('Kembali ke Zona 1...')">
+      <div style="display:flex; justify-content:space-between; font-size:11px; color:#ffd700; margin-bottom:4px;">
+        <span>ZONA 1</span><span>TERSEDIA</span>
+      </div>
+      <h4 style="font-family:'Cinzel',serif;">The Origin of Undip</h4>
+      <p style="font-size:11.5px; color:#b8c7db;">Sejarah Pendirian & Pancamitra Pendiri (1956–1961)</p>
+    </div>
+    <div class="zone-card active">
+      <div style="display:flex; justify-content:space-between; font-size:11px; color:#ffd700; margin-bottom:4px;">
+        <span>ZONA 2</span><span>SEDANG DILIHAT</span>
+      </div>
+      <h4 style="font-family:'Cinzel',serif;">The Growth of Knowledge</h4>
+      <p style="font-size:11.5px; color:#b8c7db;">Perkembangan 14 Fakultas & Transformasi Kampus (1961–1990)</p>
+    </div>
+    <div class="zone-card" style="opacity:0.55; cursor:not-allowed;">
+      <div style="display:flex; justify-content:space-between; font-size:11px; color:#ffd700; margin-bottom:4px;">
+        <span>ZONA 3</span><span>SEGERA HADIR</span>
+      </div>
+      <h4 style="font-family:'Cinzel',serif;">The Heritage of Undip</h4>
+      <p style="font-size:11.5px; color:#b8c7db;">Warisan Sejarah, Artefak Akademik & Nilai Kesatria</p>
+    </div>
+  </aside>
+
+  <!-- 2D Mini-Map -->
+  <div class="minimap">
+    <div class="minimap-title">DENAH ZONA 2</div>
+    <svg id="minimap-svg" width="140" height="240" viewBox="0 0 140 240">
+      <rect x="4" y="4" width="132" height="232" fill="#061224" stroke="#d4af37" stroke-width="1.5" rx="4"/>
+      <rect x="52" y="8" width="36" height="224" fill="#6b0f1a"/>
+      <!-- Sub-zone pins -->
+      <circle cx="70" cy="40" r="5" fill="#d4af37" onclick="teleportTo(0, 16.0)" style="cursor:pointer;"/>
+      <circle cx="70" cy="80" r="6" fill="#ffd700" onclick="teleportTo(0, 5.5)" style="cursor:pointer;"/>
+      <circle cx="70" cy="120" r="6" fill="#4fc3f7" onclick="teleportTo(0, 0.0)" style="cursor:pointer;"/>
+      <circle cx="70" cy="160" r="6" fill="#81c784" onclick="teleportTo(0, -7.5)" style="cursor:pointer;"/>
+      <circle cx="70" cy="200" r="6" fill="#ba68c8" onclick="teleportTo(0, -14.0)" style="cursor:pointer;"/>
+      <!-- Player Radar Point -->
+      <circle id="radar-player" cx="70" cy="40" r="5" fill="#fff" stroke="#000" stroke-width="1.5"/>
+    </svg>
+    <div style="font-size:9.5px; color:#b8c7db; margin-top:4px;">Klik titik untuk teleport</div>
+  </div>
+
+  <!-- Bottom Hints -->
+  <div class="hints-bar">
+    <span class="key-badge">W</span><span class="key-badge">A</span><span class="key-badge">S</span><span class="key-badge">D</span>
+    <span>jalan</span> •
+    <span class="key-badge">Shift</span> <span>lari</span> •
+    <span>geser mouse untuk melihat</span> •
+    <span class="key-badge">N</span> <span>kunci pandangan</span>
+  </div>
+
+  <!-- Detail Modal -->
+  <div id="modal-detail" class="modal-overlay" onclick="closeModal()">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <span id="modal-badge" class="modal-badge">INFO PAMERAN</span>
+      <h2 id="modal-title" class="modal-title">Judul Pameran</h2>
+      <p id="modal-sub" class="modal-sub">Subjudul / Tahun</p>
+      <div id="modal-desc" class="modal-desc">Deskripsi pameran...</div>
+      <button class="btn-gold" onclick="closeModal()">Tutup Informasi</button>
+    </div>
+  </div>
+
+  <!-- Pinned Three.js from Official CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <script>
+    // 1. PALETTE CONFIGURATION (JANGAN MENYIMPANG DARI BRIEF)
+    const PALETTE = {
+      navyDark: '#0B1A3A',
+      navyPrimary: '#0E2250',
+      goldTrim: '#D4AF37',
+      goldBright: '#FFD700',
+      goldLight: '#FFE89C',
+      ivoryMain: '#E8E0D0',
+      ivoryWarm: '#D9D0BE',
+      maroonCarpet: '#6B0F1A',
+      darkWood: '#3B2412',
+      teakDeep: '#2A1A0E',
+      floorMarble: '#F0ECE4',
+      warmLight: '#FFF2D9'
+    };
+
+    // 2. SCENE, CAMERA, RENDERER
+    const container = document.getElementById('canvas-container');
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color('#071228');
+    scene.fog = new THREE.Fog('#071228', 25, 55);
+
+    const camera = new THREE.PerspectiveCamera(58, window.innerWidth / window.innerHeight, 0.1, 70);
+    const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    container.appendChild(renderer.domElement);
+
+    // 3. ARCHITECTURAL ROOM (14m x 40m x 6.2m)
+    const halfW = 7.0, height = 6.2, length = 40.0;
+
+    // Floor (White Marble + Central Maroon Carpet)
+    const floorGeo = new THREE.PlaneGeometry(halfW * 2, length);
+    const floorMat = new THREE.MeshStandardMaterial({ color: PALETTE.floorMarble, roughness: 0.25, metalness: 0.15 });
+    const floorMesh = new THREE.Mesh(floorGeo, floorMat);
+    floorMesh.rotation.x = -Math.PI / 2;
+    floorMesh.receiveShadow = true;
+    scene.add(floorMesh);
+
+    const carpetGeo = new THREE.PlaneGeometry(3.2, length - 1.2);
+    const carpetMat = new THREE.MeshStandardMaterial({ color: PALETTE.maroonCarpet, roughness: 0.7 });
+    const carpetMesh = new THREE.Mesh(carpetGeo, carpetMat);
+    carpetMesh.rotation.x = -Math.PI / 2;
+    carpetMesh.position.y = 0.01;
+    scene.add(carpetMesh);
+
+    // Ceiling & Cove Lights
+    const ceilGeo = new THREE.PlaneGeometry(halfW * 2, length);
+    const ceilMat = new THREE.MeshStandardMaterial({ color: PALETTE.ivoryWarm, roughness: 0.6 });
+    const ceilMesh = new THREE.Mesh(ceilGeo, ceilMat);
+    ceilMesh.rotation.x = Math.PI / 2;
+    ceilMesh.position.y = height;
+    scene.add(ceilMesh);
+
+    // Walls
+    const wallMat = new THREE.MeshStandardMaterial({ color: PALETTE.ivoryMain, roughness: 0.7 });
+    const leftWall = new THREE.Mesh(new THREE.PlaneGeometry(length, height), wallMat);
+    leftWall.position.set(-halfW, height / 2, 0);
+    leftWall.rotation.y = Math.PI / 2;
+    scene.add(leftWall);
+
+    const rightWall = new THREE.Mesh(new THREE.PlaneGeometry(length, height), wallMat);
+    rightWall.position.set(halfW, height / 2, 0);
+    rightWall.rotation.y = -Math.PI / 2;
+    scene.add(rightWall);
+
+    // 4. LIGHTING
+    const ambLight = new THREE.AmbientLight(PALETTE.warmLight, 0.95);
+    scene.add(ambLight);
+
+    const dirLight = new THREE.DirectionalLight('#fff7e6', 1.2);
+    dirLight.position.set(4, 10, 8);
+    dirLight.castShadow = true;
+    scene.add(dirLight);
+
+    // Chandeliers
+    [10.0, 3.0, -4.0, -11.0].forEach(cz => {
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(1.2, 0.04, 8, 24), new THREE.MeshStandardMaterial({ color: PALETTE.goldTrim, metalness: 0.9 }));
+      ring.position.set(0, height - 1.2, cz);
+      ring.rotation.x = Math.PI / 2;
+      scene.add(ring);
+
+      const pLight = new THREE.PointLight(PALETTE.warmLight, 25, 12);
+      pLight.position.set(0, height - 1.4, cz);
+      scene.add(pLight);
+    });
+
+    // 5. SUB-ZONE A: FACULTY TREE OF GROWTH (Z = 5.5)
+    const treeGroup = new THREE.Group();
+    treeGroup.position.set(0, 0, 5.5);
+
+    const pedGeo = new THREE.CylinderGeometry(1.6, 1.8, 0.3, 8);
+    const pedMat = new THREE.MeshStandardMaterial({ color: PALETTE.teakDeep, roughness: 0.5 });
+    const ped = new THREE.Mesh(pedGeo, pedMat);
+    ped.position.y = 0.15;
+    treeGroup.add(ped);
+
+    const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.5, 3.2, 12), new THREE.MeshStandardMaterial({ color: PALETTE.darkWood, roughness: 0.6 }));
+    trunk.position.y = 1.7;
+    treeGroup.add(trunk);
+
+    // 14 Faculty Plaques
+    const faculties = [
+      { code: 'FH', name: 'Fakultas Hukum', yr: '1957', color: '#c41e3a', deans: 'Mr. Soedarto, S.H.' },
+      { code: 'FT', name: 'Fakultas Teknik', yr: '1958', color: '#002366', deans: 'Ir. Jacob Rais' },
+      { code: 'FEB', name: 'Fakultas Ekonomika dan Bisnis', yr: '1960', color: '#808080', deans: 'Drs. Moelyo' },
+      { code: 'FK', name: 'Fakultas Kedokteran', yr: '1961', color: '#2e8b57', deans: 'dr. Heyder bin Heyder' },
+      { code: 'FPP', name: 'Fakultas Peternakan & Pertanian', yr: '1964', color: '#355e3b', deans: 'Prof. R. Soeratno' },
+      { code: 'FIB', name: 'Fakultas Ilmu Budaya', yr: '1965', color: '#ffffff', deans: 'Prof. Soeharto' },
+      { code: 'FPIK', name: 'Fakultas Perikanan & Ilmu Kelautan', yr: '1968', color: '#0077be', deans: 'Prof. Johannes' },
+      { code: 'FISIP', name: 'Fakultas Ilmu Sosial & Ilmu Politik', yr: '1968', color: '#ffbf00', deans: 'Drs. Soedjito' },
+      { code: 'FSM', name: 'Fakultas Sains dan Matematika', yr: '1988', color: '#800080', deans: 'Prof. Supartono' },
+      { code: 'FKM', name: 'Fakultas Kesehatan Masyarakat', yr: '1993', color: '#8fbc8f', deans: 'dr. Budioro' },
+      { code: 'FPSI', name: 'Fakultas Psikologi', yr: '2007', color: '#4682b4', deans: 'Dra. Karyono' },
+      { code: 'SV', name: 'Sekolah Vokasi', yr: '2016', color: '#ff7f50', deans: 'Prof. Budiyono' },
+      { code: 'SPs', name: 'Sekolah Pascasarjana', yr: '2003', color: '#8b0000', deans: 'Prof. Sudharto P. Hadi' },
+      { code: 'FKG', name: 'Fakultas Kedokteran Gigi', yr: '2024', color: '#008080', deans: 'Pimpinan Perintis FKG [ISI DENGAN DATA RESMI]' }
+    ];
+
+    const clickableObjects = [];
+
+    faculties.forEach((fac, i) => {
+      const angle = (i * Math.PI * 2) / 7;
+      const radius = 1.35 + (i % 2) * 0.35;
+      const y = 1.1 + i * 0.16;
+      const px = Math.cos(angle) * radius;
+      const pz = Math.sin(angle) * radius;
+
+      const plaque = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.26, 0.03), new THREE.MeshStandardMaterial({ color: PALETTE.goldTrim, metalness: 0.88, roughness: 0.25 }));
+      plaque.position.set(px, y, pz);
+      plaque.rotation.y = -angle + Math.PI / 2;
+      plaque.userData = {
+        title: fac.name,
+        badge: '14 FAKULTAS UNDIP',
+        sub: `Didirikan: ${fac.yr} • Dekan: ${fac.deans}`,
+        desc: `Fakultas ${fac.name} (${fac.code}) merupakan pilar keilmuan penting di Universitas Diponegoro yang terus mencetak lulusan berkarakter kesatria.`
+      };
+      clickableObjects.push(plaque);
+      treeGroup.add(plaque);
+    });
+    scene.add(treeGroup);
+
+    // 6. SUB-ZONE B: CAMPUS TRANSFORMATION EXHIBIT (Z = 0)
+    // Table 1: Pleburan
+    const plebTable = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.9, 1.6), new THREE.MeshStandardMaterial({ color: PALETTE.teakDeep, roughness: 0.5 }));
+    plebTable.position.set(-3.4, 0.45, 0);
+    plebTable.userData = {
+      title: 'Kampus Bersejarah Pleburan (1957–1980)',
+      badge: 'TRANSFORMASI KAMPUS',
+      sub: 'Jl. Imam Bardjo, Semarang Tengah',
+      desc: 'Kampus pertama Universitas Diponegoro yang berpusat di Gedung Panti Budaya dan Aula Hayam Wuruk, saksi bisu perkuliahan perdana dan pidato Presiden Soekarno.'
+    };
+    clickableObjects.push(plebTable);
+    scene.add(plebTable);
+
+    // Table 2: Tembalang
+    const tembTable = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.9, 1.6), new THREE.MeshStandardMaterial({ color: PALETTE.teakDeep, roughness: 0.5 }));
+    tembTable.position.set(3.4, 0.45, 0);
+    tembTable.userData = {
+      title: 'Kampus Modern Tembalang (1980–Kini)',
+      badge: 'TRANSFORMASI KAMPUS',
+      sub: 'Kawasan Hijau 180+ Hektar, Semarang Selatan',
+      desc: 'Pusat keunggulan terpadu berwawasan lingkungan: Muladi Dome, Rektorat Widya Puraya, RSND, dan sarana riset kelas dunia.'
+    };
+    clickableObjects.push(tembTable);
+    scene.add(tembTable);
+
+    // 7. SUB-ZONE C: EDUCATION & RESEARCH (Z = -7.5)
+    const labTable = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.9, 1.4), new THREE.MeshStandardMaterial({ color: PALETTE.teakDeep, roughness: 0.5 }));
+    labTable.position.set(-3.4, 0.45, -7.5);
+    labTable.userData = {
+      title: 'Pola Ilmiah Pokok (PIP): Kelautan & Wilayah Tropis',
+      badge: 'PENDIDIKAN & RISET',
+      sub: 'Stasiun Riset Teluk Awur Jepara & Kapal Surya Diponegoro',
+      desc: 'Keunggulan riset spesifik Undip dalam bidang kelautan tropis, konservasi pesisir, dan bioteknologi laut nusantara.'
+    };
+    clickableObjects.push(labTable);
+    scene.add(labTable);
+
+    // 8. SUB-ZONE D: ACHIEVEMENTS & CONTRIBUTIONS (Z = -14.0)
+    const trophyCase = new THREE.Mesh(new THREE.BoxGeometry(2.2, 1.8, 1.1), new THREE.MeshPhysicalMaterial({ color: '#fff', transparent: true, opacity: 0.35, roughness: 0.1 }));
+    trophyCase.position.set(3.4, 0.9, -14.0);
+    trophyCase.userData = {
+      title: 'Koleksi Prestasi & Medali Kejuaraan Undip',
+      badge: 'PRESTASI & KONTRIBUSI',
+      sub: 'Juara PIMNAS, Rekor MURI & #1 QS Graduate Employability',
+      desc: 'Etalase kehormatan bagi piala, medali emas riset teknologi bionik, serta bukti keunggulan lulusan Undip yang paling cepat diserap industri.'
+    };
+    clickableObjects.push(trophyCase);
+    scene.add(trophyCase);
+
+    // 9. FIRST-PERSON PLAYER CONTROLS
+    let posX = 0, posZ = 16.0;
+    let yaw = Math.PI, pitch = 0;
+    const keys = {};
+    let isLocked = false;
+
+    window.addEventListener('keydown', e => {
+      keys[e.code] = true;
+      if (e.code === 'KeyN') {
+        isLocked = !isLocked;
+        if (isLocked) container.requestPointerLock?.();
+        else document.exitPointerLock?.();
+      }
+    });
+    window.addEventListener('keyup', e => { keys[e.code] = false; });
+
+    let isMouseDown = false, prevMouseX = 0, prevMouseY = 0;
+    container.addEventListener('mousedown', e => {
+      isMouseDown = true;
+      prevMouseX = e.clientX;
+      prevMouseY = e.clientY;
+
+      // Raycast click
+      const mouse = new THREE.Vector2((e.clientX / window.innerWidth) * 2 - 1, -(e.clientY / window.innerHeight) * 2 + 1);
+      const raycaster = new THREE.Raycaster();
+      raycaster.setFromCamera(mouse, camera);
+      const hits = raycaster.intersectObjects(clickableObjects, true);
+      if (hits.length > 0) {
+        let obj = hits[0].object;
+        while (obj && !obj.userData?.title && obj.parent) obj = obj.parent;
+        if (obj && obj.userData?.title) {
+          openModal(obj.userData.title, obj.userData.badge, obj.userData.sub, obj.userData.desc);
+        }
+      }
+    });
+
+    window.addEventListener('mouseup', () => { isMouseDown = false; });
+    window.addEventListener('mousemove', e => {
+      if (document.pointerLockElement === container) {
+        yaw -= e.movementX * 0.0022;
+        pitch = Math.max(-1.4, Math.min(1.4, pitch - e.movementY * 0.0022));
+      } else if (isMouseDown) {
+        yaw -= (e.clientX - prevMouseX) * 0.0022;
+        pitch = Math.max(-1.4, Math.min(1.4, pitch - (e.clientY - prevMouseY) * 0.0022));
+        prevMouseX = e.clientX;
+        prevMouseY = e.clientY;
+      }
+    });
+
+    function teleportTo(x, z) {
+      posX = x;
+      posZ = z;
+    }
+
+    // Modal UI functions
+    function openModal(title, badge, sub, desc) {
+      document.getElementById('modal-title').textContent = title;
+      document.getElementById('modal-badge').textContent = badge || 'INFO';
+      document.getElementById('modal-sub').textContent = sub || '';
+      document.getElementById('modal-desc').textContent = desc || '';
+      document.getElementById('modal-detail').classList.add('open');
+    }
+    function closeModal() {
+      document.getElementById('modal-detail').classList.remove('open');
+    }
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('open');
+      document.getElementById('sidebar-backdrop').classList.toggle('open');
+    }
+
+    // Procedural Web Audio Player
+    let audioCtx = null;
+    let isAudioPlaying = false;
+    function toggleAudio() {
+      const btn = document.getElementById('btn-audio');
+      if (!isAudioPlaying) {
+        try {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          audioCtx = new AudioContext();
+          const master = audioCtx.createGain();
+          master.gain.setValueAtTime(0.12, audioCtx.currentTime);
+          master.connect(audioCtx.destination);
+
+          [73.42, 110.0, 146.83, 220.0, 293.66].forEach((f, idx) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = idx % 2 === 0 ? 'sine' : 'triangle';
+            osc.frequency.setValueAtTime(f, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.04 / (idx + 1), audioCtx.currentTime);
+            osc.connect(gain);
+            gain.connect(master);
+            osc.start();
+          });
+          isAudioPlaying = true;
+          btn.textContent = '🔊 MUSIK AKTIF';
+          btn.classList.add('active');
+        } catch(e) {}
+      } else {
+        if (audioCtx) audioCtx.close();
+        isAudioPlaying = false;
+        btn.textContent = '🔇 MUSIK HENING';
+        btn.classList.remove('active');
+      }
+    }
+
+    function openGraphicsModal() {
+      alert("Pilihan Grafik:\n1. Standar (Ringan, dpr 1.0)\n2. HD (Seimbang, dpr 1.5, Shadows on)\n3. Full HD (Tertinggi, dpr 2.0)\n\nPreset aktif saat ini: HD");
+    }
+
+    // 10. ANIMATION RENDER LOOP
+    const radar = document.getElementById('radar-player');
+    const clock = new THREE.Clock();
+
+    function animate() {
+      requestAnimationFrame(animate);
+      const dt = clock.getDelta();
+
+      let speed = keys['ShiftLeft'] || keys['ShiftRight'] ? 7.2 : 3.6;
+      let forward = 0, strafe = 0;
+      if (keys['KeyW'] || keys['ArrowUp']) forward += 1;
+      if (keys['KeyS'] || keys['ArrowDown']) forward -= 1;
+      if (keys['KeyD'] || keys['ArrowRight']) strafe += 1;
+      if (keys['KeyA'] || keys['ArrowLeft']) strafe -= 1;
+
+      if (forward !== 0 || strafe !== 0) {
+        const cos = Math.cos(yaw), sin = Math.sin(yaw);
+        posX += (strafe * cos - forward * sin) * speed * dt;
+        posZ += (-forward * cos - strafe * sin) * speed * dt;
+
+        // Clamp to room bounds
+        posX = Math.max(-6.3, Math.min(6.3, posX));
+        posZ = Math.max(-17.2, Math.min(17.2, posZ));
+      }
+
+      camera.position.set(posX, 1.65, posZ);
+      camera.rotation.set(pitch, yaw, 0, 'YXZ');
+
+      // Update 2D Minimap radar
+      if (radar) {
+        const mapX = ((posX + 7) / 14) * 140;
+        const mapY = ((18 - posZ) / 40) * 220 + 10;
+        radar.setAttribute('cx', mapX);
+        radar.setAttribute('cy', mapY);
+      }
+
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
+</body>
+</html>
